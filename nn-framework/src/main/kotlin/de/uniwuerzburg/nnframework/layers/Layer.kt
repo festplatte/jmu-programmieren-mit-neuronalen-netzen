@@ -1,4 +1,6 @@
-package de.uniwuerzburg.nnframework
+package de.uniwuerzburg.nnframework.layers
+
+import de.uniwuerzburg.nnframework.data.Tensor
 
 interface Layer {
     fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>)
