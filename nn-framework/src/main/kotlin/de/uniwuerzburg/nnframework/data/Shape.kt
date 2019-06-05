@@ -1,10 +1,15 @@
 package de.uniwuerzburg.nnframework.data
 
-// TODO Zugriff auf axis bauen
+/**
+ * Beschreibt die Form eines Tensors.
+ */
 class Shape(private val axis: IntArray) {
     val volume: Int get() {
         var result = 1
         axis.forEach { result *= it }
         return result
     }
+    val dimensions: Int get() = axis.size
+
+    fun get(i: Int) = axis[i]
 }
