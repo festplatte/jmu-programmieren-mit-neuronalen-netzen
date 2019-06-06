@@ -11,5 +11,5 @@ class Shape(private val axis: IntArray) {
     }
     val dimensions: Int get() = axis.size
 
-    fun get(i: Int) = axis[i]
+    fun get(i: Int) = if (i < axis.size ) axis[i] else 1
 }

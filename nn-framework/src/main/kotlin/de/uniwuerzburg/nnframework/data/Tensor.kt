@@ -3,13 +3,16 @@ package de.uniwuerzburg.nnframework.data
 /**
  * @author mg
  */
-class Tensor(private var shape: Shape, private var elements: FloatArray) {
+class Tensor(internal var shape: Shape, private var elements: FloatArray) {
     private val deltas: FloatArray by lazy { FloatArray(shape.volume) }
 
     // TODO Addition von Tensoren (für Bias) implementieren
 
     fun mult(tensor: Tensor): Tensor {
-        val resultShape = Shape(arrayOf(this.shape.get(0), tensor.shape.get(1)).toIntArray())
+        val dimensions = mutableListOf(this.shape.get(0))
+        if (tensor.shape.dimensions > 1) dimensions.add(tensor.shape.get(1))
+
+        val resultShape = Shape(dimensions.toIntArray())
         val resultTensor = Tensor(resultShape, FloatArray(resultShape.volume))
         mult(tensor, resultTensor)
 
@@ -41,9 +44,9 @@ class Tensor(private var shape: Shape, private var elements: FloatArray) {
                 for (column in 0..outTensor.shape.get(1)) {
                     result = 0f
                     for (i in 0..this.shape.get(1)) {
-                        result += this.elements[this.calcIndex(arrayOf(row, i).toIntArray()) + offsetThis] * multTensor.elements[multTensor.calcIndex(arrayOf(i, column).toIntArray()) + offsetMult]
+                        result += this.elements[this.calcIndex(intArrayOf(row, i)) + offsetThis] * multTensor.elements[multTensor.calcIndex(intArrayOf(i, column)) + offsetMult]
                     }
-                    outTensor.elements[outTensor.calcIndex(arrayOf(row, column).toIntArray()) + offsetOut] = result
+                    outTensor.elements[outTensor.calcIndex(intArrayOf(row, column)) + offsetOut] = result
                 }
             }
 
@@ -71,8 +74,10 @@ class Tensor(private var shape: Shape, private var elements: FloatArray) {
         var index = 0
         for (i in indices.indices) {
             var curIndex = indices[i]
-            for (j in i..0) {
-                curIndex *= shape.get(j)
+            if (i != 0) {
+                for (j in 0..i-1) {
+                    curIndex *= shape.get(j)
+                }
             }
             index += curIndex
         }
