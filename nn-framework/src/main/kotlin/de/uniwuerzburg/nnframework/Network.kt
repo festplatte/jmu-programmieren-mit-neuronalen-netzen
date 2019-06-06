@@ -13,7 +13,7 @@ class Network<T: Collection<Float>>(private val input: InputLayer<T>,
                                     private val deltaParams: List<Tensor>) {
 
     val parameters get() = deltaParams
-
+    
     // TODO implement caches if required
 
     fun forward() {
