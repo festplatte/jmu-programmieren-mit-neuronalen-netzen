@@ -5,7 +5,7 @@ import de.uniwuerzburg.nnframework.data.Tensor
 
 /**
  * zu klären:
- * - warum inShape und outShape? die Tensoren haben bereits eine Shape.
+ * - warum inShape und outShape? die Tensoren haben bereits eine Shape. -> zur Initialisierung der Weightmatrix
  */
 class FullyConnectedLayer(private val weightmatrix: Tensor,
                           private val bias: Tensor,

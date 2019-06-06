@@ -9,11 +9,10 @@ import de.uniwuerzburg.nnframework.layers.Layer
  * - was machen die deltaParams?
  */
 class Network<T: Collection<Float>>(private val input: InputLayer<T>,
-                                    private val layers: List<Layer>,
-                                    private val deltaParams: List<Tensor>) {
+                                    private val layers: List<Layer>) {
 
-    val parameters get() = deltaParams
-    
+
+    // TODO methode für Weightupdates
     // TODO implement caches if required
 
     fun forward() {
