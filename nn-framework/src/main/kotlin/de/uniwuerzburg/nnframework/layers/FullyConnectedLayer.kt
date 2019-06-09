@@ -3,6 +3,10 @@ package de.uniwuerzburg.nnframework.layers
 import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
 
+/*
+InProgress: Vanessa
+ */
+
 /**
  * zu klären:
  * - warum inShape und outShape? die Tensoren haben bereits eine Shape. -> zur Initialisierung der Weightmatrix
