@@ -2,6 +2,7 @@ package de.uniwuerzburg.nnframework.layers
 
 import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
+import de.uniwuerzburg.nnframework.data.mult
 
 /**
  * @author vb
@@ -16,7 +17,7 @@ class FullyConnectedLayer(private val weightmatrix: Tensor,
                           private val inShape: Shape,
                           private val outShape: Shape) : Layer {
 
-    init{
+    init {
         // Initialize weight matrix W and the bias
 
         // W: Fully connected, e.g. one weight between each pair contained in the in and the outShape
@@ -24,6 +25,7 @@ class FullyConnectedLayer(private val weightmatrix: Tensor,
         for (i in 0 until weightmatrix.shape.dimensions) {
             //Init with values between -1 and 1
         }
+        weightmatrix.elements.map { /* zufallszahl */ }
 
     }
 
@@ -34,9 +36,9 @@ class FullyConnectedLayer(private val weightmatrix: Tensor,
     */
     override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
         val inTensorsIterator = inTensors.iterator()
-        for (inTensor in inTensorsIterator){
+        for (inTensor in inTensorsIterator) {
             //Returns a tensor, however the existing outTensor should be filled ...
-            inTensor.mult(weightmatrix) //.add(bias) TODO add bias after Michi has finished his Tensor class
+            mult(inTensor, weightmatrix) //.add(bias) TODO add bias after Michi has finished his Tensor class
         }
 
     }
