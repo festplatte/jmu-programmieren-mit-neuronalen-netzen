@@ -4,7 +4,7 @@ package de.uniwuerzburg.nnframework.data
  * Ein Tensor ist ein Container für Float Werte, die entsprechend der Shape angeordnet sind.
  * Somit können Vektoren, Matrizen und mehrdimensionale Datenformen abgebildet werden.
  */
-class Tensor(internal var shape: Shape, var elements: FloatArray) {
+class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volume)) {
     val deltas: FloatArray by lazy { FloatArray(shape.volume) }
 
     /**

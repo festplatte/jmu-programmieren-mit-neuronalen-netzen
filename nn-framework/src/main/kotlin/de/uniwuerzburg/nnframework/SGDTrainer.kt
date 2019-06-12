@@ -11,7 +11,7 @@ class SGDTrainer(private val batchSize: Int = 1,
      * anschließend die Gewichte geupdatet anhand des updateMechanism.
      */
     fun <T: Collection<Float>> optimize(network: Network<T>, data: List<T>) {
-        // TODO (forward -> backprop) * batchsize -> update entsprechend updateMechanism
+        // TODO (forward -> loss berechnen -> backprop) * batchsize -> update entsprechend updateMechanism
     }
 
 }

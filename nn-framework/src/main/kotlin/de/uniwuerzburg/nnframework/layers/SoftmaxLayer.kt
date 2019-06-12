@@ -1,8 +1,9 @@
 package de.uniwuerzburg.nnframework.layers
 
+import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
 
-class SoftmaxLayer: Layer {
+class SoftmaxLayer(override val outputShape: Shape): Layer {
     override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
         // TODO
     }

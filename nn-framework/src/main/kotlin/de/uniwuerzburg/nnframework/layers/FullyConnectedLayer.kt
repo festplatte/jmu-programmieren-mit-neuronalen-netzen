@@ -29,6 +29,8 @@ class FullyConnectedLayer(private val weightmatrix: Tensor,
 
     }
 
+    override val outputShape get() = outShape
+
     /*
     * The forward pass fills the elements of the outTensors,
     * while having access to the elements in inTensors:

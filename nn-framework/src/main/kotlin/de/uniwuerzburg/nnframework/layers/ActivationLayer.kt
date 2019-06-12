@@ -1,12 +1,13 @@
 package de.uniwuerzburg.nnframework.layers
 
+import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
 
 /**
  * Repräsentiert eine Aktivierungsfunktion (z.B. ReLU, Sigmoid, TanH). Sollte evtl. als Interface
  * implementiert werden.
  */
-class ActivationLayer: Layer {
+class ActivationLayer(override val outputShape: Shape): Layer {
     /**
      * Wendet Aktivierungsfunktion an.
      */
