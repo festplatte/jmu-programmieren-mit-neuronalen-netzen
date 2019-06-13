@@ -14,5 +14,4 @@ interface Layer {
      * @param outTensors Fehler/Deltas der aktuellen Schicht
      */
     fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>)
-    fun calculateDeltaWeights(outTensors: List<Tensor>, inTensors: List<Tensor>)
 }

@@ -15,7 +15,7 @@ import de.uniwuerzburg.nnframework.data.mult
 class FullyConnectedLayer(private val weightmatrix: Tensor,
                           private val bias: Tensor,
                           private val inShape: Shape,
-                          private val outShape: Shape) : Layer {
+                          private val outShape: Shape) : WeightLayer {
 
     init {
         // Initialize weight matrix W and the bias
