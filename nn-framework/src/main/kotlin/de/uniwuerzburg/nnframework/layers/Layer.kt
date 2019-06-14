@@ -9,9 +9,9 @@ interface Layer {
     fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>)
 
     /**
-     * Berechnung der Fehler für die aktuelle Schicht.
-     * @param inTensors beinhaltet Deltas der Daten der vorherigen Schicht
-     * @param outTensors Fehler/Deltas der aktuellen Schicht
+     * Berechnung der Deltas für die aktuelle Schicht.
+     * @param outTensors beinhalten bereits die Deltas der nachfolgenden Schicht des Forward-Passes.
+     * @param inTensors Deltas der inTensoren werden berechnet und gespeichert
      */
     fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>)
 }

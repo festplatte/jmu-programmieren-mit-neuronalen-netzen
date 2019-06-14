@@ -56,7 +56,7 @@ class Network<T>(private val input: InputLayer<T>,
      * Führt den Backwardpass durch.
      * @param loss Der berechnete Loss für den Output des Forwardpass
      */
-    fun backprop(loss: Float) {
+    fun backprop(lastOutput: List<Tensor>) {
         for (i in (1..layers.lastIndex).reversed()) {
             val layer = layers[i]
             val prevLayer = layers[i - 1]

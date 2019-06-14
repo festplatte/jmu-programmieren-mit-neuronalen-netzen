@@ -29,9 +29,10 @@ class SGDTrainer(private val batchSize: Int = 1,
                 val batchData = dataList.subList(batchOffset, processedData)
                 val batchLabels = batchData.map { data[it] ?: throw IllegalArgumentException("no label for data") }
 
-                val predictedLabels = network.forward(batchData)
-                val loss = lossFkt.calculate(predictedLabels, batchLabels)
-                network.backprop(loss)
+                val forwardOutput = network.forward(batchData)
+                val loss = lossFkt.calculate(forwardOutput, batchLabels)
+                lossFkt.differentiate(forwardOutput, batchLabels)
+                network.backprop(forwardOutput)
                 // TODO update weights
 
                 println("Epoch: $epoch - Data: $processedData/${dataList.size} - Loss: $loss")

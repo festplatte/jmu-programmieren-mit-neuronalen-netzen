@@ -11,4 +11,10 @@ class MeanSquaredLoss: LossFkt {
         return 0f
     }
 
+    /**
+     * Berechnet die Ableitung der Loss-Funktion nach den labels.
+     */
+    override fun differentiate(results: List<Tensor>, labels: List<Tensor>) {
+        // TODO
+    }
 }
