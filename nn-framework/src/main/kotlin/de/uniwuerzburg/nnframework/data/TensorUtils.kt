@@ -1,5 +1,9 @@
 package de.uniwuerzburg.nnframework.data
 
+/*
+* vb: in work -> add initWeights functionality
+* */
+
 fun add(tensorA: Tensor, tensorB: Tensor): Tensor {
     val resultShape = Shape(tensorA.shape.axis.clone())
     val resultTensor = Tensor(resultShape, FloatArray(resultShape.volume))

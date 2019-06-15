@@ -9,8 +9,7 @@ import de.uniwuerzburg.nnframework.data.mult
  */
 
 /**
- * zu klären:
- * - warum inShape und outShape? die Tensoren haben bereits eine Shape. -> zur Initialisierung der Weightmatrix
+ * Die Tensoren haben war eine Shape, inShape und outShape sind aber zur Initialisierung der Weightmatrix
  */
 class FullyConnectedLayer(private val weightmatrix: Tensor,
                           private val bias: Tensor,
