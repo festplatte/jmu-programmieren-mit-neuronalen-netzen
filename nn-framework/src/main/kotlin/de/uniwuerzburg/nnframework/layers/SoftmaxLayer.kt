@@ -9,6 +9,9 @@ import de.uniwuerzburg.nnframework.data.Tensor
 
 class SoftmaxLayer(override val outputShape: Shape): ActivationLayer {
 
+    /**
+     * Wendet die Softmax-Funktion elementweise an
+     */
     override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
         for (i in inTensors.indices){
             var inTensor = inTensors.get(i)

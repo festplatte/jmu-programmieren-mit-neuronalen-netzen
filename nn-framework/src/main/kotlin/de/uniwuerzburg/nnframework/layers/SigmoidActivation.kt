@@ -12,7 +12,7 @@ import de.uniwuerzburg.nnframework.data.Tensor
  */
 class SigmoidActivation(override val outputShape: Shape): ActivationLayer {
     /**
-     * Wendet Aktivierungsfunktion an.
+     * Wendet die Aktivierungsfunktion elementweise an.
      */
     override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
         for (i in inTensors.indices){

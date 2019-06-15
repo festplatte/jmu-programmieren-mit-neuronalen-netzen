@@ -1,7 +1,10 @@
 package de.uniwuerzburg.nnframework.data
 
+import java.util.*
+import de.uniwuerzburg.nnframework.mapInPlace
+
 /*
-* vb: in work -> add initWeights functionality
+* vb: in work -> add initWeights and print functionalities
 * */
 
 fun add(tensorA: Tensor, tensorB: Tensor): Tensor {
@@ -69,3 +72,48 @@ fun mult(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor) {
         offsetOut += volOutMatrix
     }
 }
+
+/**
+ * Initialisiert die Elemente des uebergebenen Tensors mit gleichverteilt, zufaelligen Werten zwischen -1 und 1
+ */
+fun initializeWeights(tensor:Tensor){
+    tensor.elements.mapInPlace {Float ->
+        //ThreadLocalRandom.current().nextFloat()}
+        if(Random().nextDouble()<0.5){
+            Random().nextFloat()
+        }else{
+            Random().nextFloat() * -1f
+        }
+    }
+}
+
+/**
+ *  Gibt die Inhalte des Tensors aus, solange er nur maximal 2 Dimensionen hat
+ */
+fun printTensor(tensor: Tensor){
+    if(tensor.shape.dimensions == 1){
+        var output = "("
+        for (element in tensor.elements.iterator()){
+            output = output + element + ", "
+        }
+        output = output.subSequence(0, output.length-2).toString() + ")"
+        println(output)
+    }
+    else if(tensor.shape.dimensions == 2)
+    {
+        for (x in 0 until tensor.shape.get(0)){
+            for (y in 0 until tensor.shape.get(1)){
+                print(tensor.get(x,y))
+                print("\t\t")
+            }
+            println()
+        }
+    }else{
+        //More than two dimensions
+        //TODO fill if needed
+        println("Too many dimenstions for pretty print")
+    }
+
+}
+
+
