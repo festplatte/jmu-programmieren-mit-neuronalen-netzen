@@ -4,6 +4,7 @@ import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
 import de.uniwuerzburg.nnframework.data.initializeWeights
 import de.uniwuerzburg.nnframework.data.printTensor
+import de.uniwuerzburg.nnframework.layers.FullyConnectedLayer
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -13,7 +14,7 @@ fun main(args: Array<String>) {
     println(img)
     println(mnistData[img])
     */
-
+    /*
     val test = Tensor(Shape(intArrayOf(3)), FloatArray(3))
     initializeWeights(test)
     printTensor(test)
@@ -21,6 +22,7 @@ fun main(args: Array<String>) {
     val test2 = Tensor(Shape(intArrayOf(3,2)), FloatArray(6))
     initializeWeights(test2)
     printTensor(test2)
+    */
 
 }
 

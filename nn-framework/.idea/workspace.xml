@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="76d43716-c403-4d4c-820d-6ba4b6ad3012" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Utils.kt" afterDir="false" />
+    <list default="true" id="76d43716-c403-4d4c-820d-6ba4b6ad3012" name="Default Changelist" comment="Added unit Test for the forward() of the FC">
+      <change afterPath="$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/layers/FC_Test.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/data/TensorUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/data/TensorUtils.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/FullyConnectedLayer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/FullyConnectedLayer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SigmoidActivation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SigmoidActivation.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SoftmaxLayer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SoftmaxLayer.kt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -35,11 +32,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/FullyConnectedLayer.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="78">
-              <caret line="52" column="11" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
+            <state relative-caret-position="306">
+              <caret line="82" column="12" selection-start-line="78" selection-start-column="8" selection-end-line="82" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -47,8 +44,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SigmoidActivation.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+            <state relative-caret-position="136">
+              <caret line="20" column="48" selection-start-line="20" selection-start-column="12" selection-end-line="20" selection-end-column="48" />
               <folding>
                 <element signature="e#44#136#0" expanded="true" />
               </folding>
@@ -56,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/data/TensorUtils.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="455">
-              <caret line="111" column="16" selection-start-line="111" selection-start-column="16" selection-end-line="111" selection-end-column="16" />
+            <state relative-caret-position="778">
+              <caret line="85" column="9" lean-forward="true" selection-start-line="85" selection-start-column="9" selection-end-line="85" selection-end-column="9" />
               <folding>
                 <element signature="e#42#106#0" expanded="true" />
               </folding>
@@ -80,10 +77,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Main.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="367">
-              <caret line="36" column="21" lean-forward="true" selection-start-line="36" selection-start-column="21" selection-end-line="36" selection-end-column="21" />
+            <state relative-caret-position="146">
+              <caret line="24" column="6" selection-start-line="24" selection-start-column="6" selection-end-line="24" selection-end-column="6" />
               <folding>
                 <element signature="e#37#149#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/layers/FC_Test.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="11" column="85" selection-start-line="11" selection-start-column="85" selection-end-line="11" selection-end-column="85" />
+              <folding>
+                <element signature="e#44#248#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -113,10 +122,12 @@
         <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/WeightLayer.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SigmoidActivation.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SoftmaxLayer.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/FullyConnectedLayer.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Utils.kt" />
-        <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Main.kt" />
         <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/data/TensorUtils.kt" />
+        <option value="$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/data/FC_Test.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Main.kt" />
+        <option value="$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/layers/FC_Test.kt" />
+        <option value="$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/FullyConnectedLayer.kt" />
       </list>
     </option>
   </component>
@@ -211,6 +222,39 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="nn-framework" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nn-framework" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nn-framework" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nn-framework" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
+              <item name="nnframework" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nn-framework" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nn-framework" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
+              <item name="nnframework" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="nn-framework" type="b2602c69:ProjectViewProjectNode" />
+              <item name="nn-framework" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="kotlin" type="462c0819:PsiDirectoryNode" />
+              <item name="nnframework" type="462c0819:PsiDirectoryNode" />
+              <item name="layers" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -228,6 +272,10 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="de.uniwuerzburg.nnframework.data" />
+      <recent name="de.uniwuerzburg.nnframework.layers" />
+    </key>
+    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
       <recent name="de.uniwuerzburg.nnframework.layers" />
     </key>
   </component>
@@ -243,7 +291,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="TestNG.FC_Test">
     <configuration name="de.uniwuerzburg.nnframework.MainKt" type="JetRunConfigurationType" factoryName="Kotlin" temporary="true" nameIsGenerated="true">
       <module name="nn-framework" />
       <option name="VM_PARAMETERS" />
@@ -257,8 +305,30 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="FC_Test" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="nn-framework" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="de.uniwuerzburg.nnframework.layers.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="de.uniwuerzburg.nnframework.layers" />
+      <option name="MAIN_CLASS_NAME" value="de.uniwuerzburg.nnframework.layers.FC_Test" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Kotlin.de.uniwuerzburg.nnframework.MainKt" />
+      <item itemvalue="TestNG.FC_Test" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="TestNG.FC_Test" />
         <item itemvalue="Kotlin.de.uniwuerzburg.nnframework.MainKt" />
       </list>
     </recent_temporary>
@@ -282,11 +352,50 @@
       <option name="project" value="LOCAL" />
       <updated>1560610957903</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added utility functions (initWeights, inPlace mapping for FloatArrays, Tensor printing 1D and 2D)&#10;Added forward pass of the FC layer">
+      <created>1560624984698</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1560624984698</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="FC_Test - 2019.06.15 at 21h 44m 09s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 45m 28s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 46m 17s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 47m 06s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 47m 44s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 49m 31s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 50m 34s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 51m 27s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 52m 30s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+    <history-entry file="FC_Test - 2019.06.15 at 21h 52m 58s.xml">
+      <configuration name="FC_Test" configurationId="TestNG" />
+    </history-entry>
+  </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18894000" />
+    <option name="totallyTimeSpent" value="22760000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
@@ -301,7 +410,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.25537634" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31451613" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -327,7 +436,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added comments for files in progress" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added comments for files in progress" />
+    <MESSAGE value="Added utility functions (initWeights, inPlace mapping for FloatArrays, Tensor printing 1D and 2D)&#10;Added forward pass of the FC layer" />
+    <MESSAGE value="Added unit Test for the forward() of the FC" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added unit Test for the forward() of the FC" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/loss/CrossEntropyLoss.kt">
@@ -353,22 +464,8 @@
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/data/TensorTest.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="6" column="51" lean-forward="true" selection-start-line="6" selection-start-column="51" selection-end-line="6" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/data/TensorUtilsTest.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="24" column="31" selection-start-line="24" selection-start-column="25" selection-end-line="24" selection-end-column="31" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/InputLayer.kt">
       <provider selected="true" editor-type-id="text-editor">
@@ -449,12 +546,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SigmoidActivation.kt">
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Network.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+        <state relative-caret-position="527">
+          <caret line="31" column="45" selection-start-line="31" selection-start-column="45" selection-end-line="31" selection-end-column="45" />
           <folding>
-            <element signature="e#44#136#0" expanded="true" />
+            <element signature="e#37#184#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -466,40 +563,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/FullyConnectedLayer.kt">
+    <entry file="file://$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/data/TensorTest.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="52" column="11" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
+        <state relative-caret-position="187">
+          <caret line="12" column="27" selection-start-line="12" selection-start-column="15" selection-end-line="12" selection-end-column="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Network.kt">
+    <entry file="file://$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/data/TensorUtilsTest.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="31" column="45" selection-start-line="31" selection-start-column="45" selection-end-line="31" selection-end-column="45" />
-          <folding>
-            <element signature="e#37#184#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="187">
+          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Main.kt">
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/SigmoidActivation.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="36" column="21" lean-forward="true" selection-start-line="36" selection-start-column="21" selection-end-line="36" selection-end-column="21" />
+        <state relative-caret-position="136">
+          <caret line="20" column="48" selection-start-line="20" selection-start-column="12" selection-end-line="20" selection-end-column="48" />
           <folding>
-            <element signature="e#37#149#0" expanded="true" />
+            <element signature="e#44#136#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/data/TensorUtils.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="111" column="16" selection-start-line="111" selection-start-column="16" selection-end-line="111" selection-end-column="16" />
+        <state relative-caret-position="778">
+          <caret line="85" column="9" lean-forward="true" selection-start-line="85" selection-start-column="9" selection-end-line="85" selection-end-column="9" />
           <folding>
             <element signature="e#42#106#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/Main.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="146">
+          <caret line="24" column="6" selection-start-line="24" selection-start-column="6" selection-end-line="24" selection-end-column="6" />
+          <folding>
+            <element signature="e#37#149#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/kotlin/de/uniwuerzburg/nnframework/layers/FC_Test.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="11" column="85" selection-start-line="11" selection-start-column="85" selection-end-line="11" selection-end-column="85" />
+          <folding>
+            <element signature="e#44#248#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/kotlin/de/uniwuerzburg/nnframework/layers/FullyConnectedLayer.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="82" column="12" selection-start-line="78" selection-start-column="8" selection-end-line="82" selection-end-column="12" />
         </state>
       </provider>
     </entry>

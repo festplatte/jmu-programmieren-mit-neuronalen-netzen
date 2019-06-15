@@ -13,13 +13,13 @@ class FullyConnectedLayer(private val inShape: Shape,
                           private val outShape: Shape) : WeightLayer {
 
     // Create tensors for the weight matrix W and for the bias
-    private val bias: Tensor = Tensor(Shape(outShape.axis.clone()), FloatArray(outShape.volume))
+    private var bias: Tensor = Tensor(Shape(outShape.axis.clone()), FloatArray(outShape.volume))
 
     // W: Fully connected, e.g. one weight between each pair contained in the in and the outShape
     // For each element in the inTensor there is a connection to each element of the outTensor
     // If the inshape has more than one dimensions, the shape needs to be flattened to a vector
-    private val weightmatrix_shape = Shape(intArrayOf(inShape.volume, outShape.volume))
-    private val weightmatrix: Tensor = Tensor(weightmatrix_shape, FloatArray(weightmatrix_shape.volume))
+    private var weightmatrix_shape = Shape(intArrayOf(inShape.volume, outShape.volume))
+    private var weightmatrix: Tensor = Tensor(weightmatrix_shape, FloatArray(weightmatrix_shape.volume))
 
 
     init {
@@ -37,19 +37,22 @@ class FullyConnectedLayer(private val inShape: Shape,
     */
     override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
         for (i in inTensors.indices){
-            var inTensor = inTensors.get(i)
-            var outTensor = outTensors.get(i)
-            for (k in inTensor.deltas.indices){
-                mult(inTensor,weightmatrix,outTensor)
-                add(outTensor,bias, outTensor)
-            }
+            val inTensor = inTensors.get(i)
+            val outTensor = outTensors.get(i)
+            println("In Tensor:")
+            printTensor(inTensor)
+            println("Weightmatrix:")
+            printTensor(weightmatrix)
+            mult(inTensor, weightmatrix, outTensor)
+            printTensor(outTensor)
+            add(outTensor,bias, outTensor)
         }
 
         /*
         val inTensorsIterator = inTensors.iterator()
         for (inTensor in inTensorsIterator) {
             //Returns a tensor, however the existing outTensor should be filled ...
-            mult(inTensor, weightmatrix) //.add(bias) TODO add bias after Michi has finished his Tensor class
+            mult(inTensor, weightmatrix) //.add(bias)
         }*/
 
     }
@@ -68,5 +71,16 @@ class FullyConnectedLayer(private val inShape: Shape,
     */
     override fun calculateDeltaWeights(outTensors: List<Tensor>, inTensors: List<Tensor>) {
         // TODO berechne die Deltas der Gewichte mit Hilfe der Deltas der outTensors und Daten der inTensors
+    }
+
+    fun setWeightsForTesting(bias:Tensor, weights:Tensor){
+        this.bias = bias
+        this.weightmatrix = weights
+        /*
+        println("Bias:")
+        printTensor(this.bias)
+        println("Weights:")
+        printTensor(weightmatrix)
+        */
     }
 }
