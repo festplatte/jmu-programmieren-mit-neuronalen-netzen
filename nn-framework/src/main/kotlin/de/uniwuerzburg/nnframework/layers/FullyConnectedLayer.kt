@@ -29,6 +29,8 @@ class FullyConnectedLayer(private val inShape: Shape,
     }
 
     override val outputShape get() = outShape
+    val getBias get() = bias
+    val getWeights get() = weightmatrix
 
 
     /*

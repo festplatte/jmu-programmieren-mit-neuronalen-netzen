@@ -63,5 +63,29 @@ class FC_Test {
 
     }
 
-    private fun createFloatArray(range: IntRange): FloatArray = range.toList().map { i: Int -> i.toFloat() }.toFloatArray()
+    @Test
+    fun testCalculateDeltaWeights(){
+        fc_layer.setWeightsForTesting(  Tensor(Shape(intArrayOf(1,3)), floatArrayOf(0.55f, 0.96f, 0.93f)),
+                Tensor(Shape(intArrayOf(2,3)), floatArrayOf(-0.71f, -0.84f,
+                        0.62f, -0.54f,
+                        -0.92f, -0.23f)))
+        // Set artificial delta values for the deltas of the out tensors
+        out_tensors.get(0).setDeltas(floatArrayOf(-0.5f, 0.33f, 1.7f))
+        out_tensors.get(1).setDeltas(floatArrayOf(-1f, 2.66f, -2.1f))
+
+        fc_layer.calculateDeltaWeights(out_tensors, in_tensors)
+        val bias = fc_layer.getBias
+        val weights = fc_layer.getWeights
+
+        Assert.assertEquals(bias.getDelta(0), -1.5f, EPSILON)
+        Assert.assertEquals(bias.getDelta(1), 2.99f, EPSILON)
+        Assert.assertEquals(bias.getDelta(2), -0.4f, EPSILON)
+
+        Assert.assertEquals(weights.getDelta(0, 0), -6f, EPSILON)
+        Assert.assertEquals(weights.getDelta(0, 1), 15.96f, EPSILON)
+        Assert.assertEquals(weights.getDelta(0, 2), -12.6f, EPSILON)
+        Assert.assertEquals(weights.getDelta(1, 0), -7.5f, EPSILON)
+        Assert.assertEquals(weights.getDelta(1, 1), 18.95f, EPSILON)
+        Assert.assertEquals(weights.getDelta(1, 2), -13f, EPSILON)
+    }
 }

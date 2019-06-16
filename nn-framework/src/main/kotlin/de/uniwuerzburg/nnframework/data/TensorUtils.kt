@@ -113,6 +113,8 @@ fun mult(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor) {
  * Es wird Matrixmultiplikation in den ersten beiden Dimensionen angewendet.
  * Über evtl. weitere Dimensionen wird nur iteriert.
  * Falls useDeltas auf true gesetzt wird, wird anstelle des element-Arrays mit dem delta-Array gearbeitet
+ * Falls outTensor_sumUp auf true gesetzt wird, wird das Ergebnis zum exisitierenden Array (element oder deltas)
+ * des outTensor dazu addiert statt das bisherige Feld einfach zu ersetzen
  */
 fun multAndTransposeFirst(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor,
                            tensorA_useDeltas: Boolean = false, tensorB_useDeltas: Boolean = false,

@@ -47,6 +47,14 @@ class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volum
     }
 
     /**
+     * Gibt das Delta des Tensors an der gegebenen Position zurück.
+     * @param indices der Zugriffs-Index für jede Dimension/Achse
+     */
+    fun getDelta(vararg indices: Int): Float {
+        return deltas[calcIndex(indices)]
+    }
+
+    /**
      * Setzt das Element des Tensors an der gegebenen Position.
      * @param value zu setzender Wert
      * @param indices der Zugriffs-Index für jede Dimension/Achse
