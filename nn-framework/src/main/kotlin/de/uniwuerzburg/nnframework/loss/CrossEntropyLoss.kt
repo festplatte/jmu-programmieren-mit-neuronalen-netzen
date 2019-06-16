@@ -16,7 +16,10 @@ class CrossEntropyLoss: LossFkt {
         for(i in results.indices){
             var result = results.get(i)
             var label = labels.get(i)
-            combinedLoss += Math.log(result.elements[label.elements[0].toInt()].toDouble()).toFloat()
+
+            for(k in result.elements.indices){
+                combinedLoss -= label.elements[k] * Math.log(result.elements[k].toDouble()).toFloat()
+            }
         }
 
         return combinedLoss / results.size
@@ -26,6 +29,13 @@ class CrossEntropyLoss: LossFkt {
      * Berechnet die Ableitung der Loss-Funktion nach den labels.
      */
     override fun differentiate(results: List<Tensor>, labels: List<Tensor>) {
-        // TODO
+        for(i in results.indices){
+            var result = results.get(i)
+            var label = labels.get(i)
+
+            for(k in result.elements.indices){
+                result.deltas[k] = (-1) * (label.elements[k] / result.elements[k])
+            }
+        }
     }
 }
