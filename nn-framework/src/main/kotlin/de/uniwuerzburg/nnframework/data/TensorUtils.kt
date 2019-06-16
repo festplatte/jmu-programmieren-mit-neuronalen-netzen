@@ -46,6 +46,19 @@ fun mult(tensorA: Tensor, tensorB: Tensor): Tensor {
     return resultTensor
 }
 
+fun multWithTransposed(tensorA: Tensor, tensorB: Tensor): Tensor {
+    val dimensions = mutableListOf(tensorA.shape.get(0))
+    if (tensorB.shape.dimensions > 1) dimensions.add(tensorB.shape.get(0))
+    // TODO kopiere weitere Dimensionen für 2+ dimensionale Tensoren
+
+    val resultShape = Shape(dimensions.toIntArray())
+    val resultTensor = Tensor(resultShape, FloatArray(resultShape.volume))
+    multWithTransposed(tensorA, tensorB, resultTensor)
+
+    return resultTensor
+}
+
+
 /**
  * Multipliziert zwei Tensoren. Dabei wird Matrixmultiplikation in den ersten beiden Dimensionen angewendet.
  * Über evtl. weitere Dimensionen wird nur iteriert.
@@ -70,6 +83,45 @@ fun mult(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor) {
                 result = 0f
                 for (i in 0..tensorA.shape.get(1)-1) {
                     result += tensorA.elements[tensorA.calcIndex(intArrayOf(row, i)) + offsettensorA] * tensorB.elements[tensorB.calcIndex(intArrayOf(i, column)) + offsetMult]
+                }
+                outTensor.elements[outTensor.calcIndex(intArrayOf(row, column)) + offsetOut] = result
+            }
+        }
+
+        offsettensorA += voltensorAMatrix
+        offsetMult += volMultMatrix
+        offsetOut += volOutMatrix
+    }
+}
+
+
+/**
+ * Multipliziert zwei Tensoren, wobei der zweite Tensor dabei transponiert wird.
+ * Es wird Matrixmultiplikation in den ersten beiden Dimensionen angewendet.
+ * Über evtl. weitere Dimensionen wird nur iteriert.
+ */
+fun multWithTransposed(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor) {
+    if (tensorA.shape.get(1) != tensorB.shape.get(1)) {
+        throw IllegalArgumentException("colums of tensorA must be equal the columns of tensorB (as it is transposed)")
+    }
+
+    val voltensorAMatrix = tensorA.shape.get(0) * tensorA.shape.get(1)
+    //Switch the indices for tensor B
+    val volMultMatrix = tensorB.shape.get(1) * tensorB.shape.get(0)
+    val volOutMatrix = outTensor.shape.get(0) * outTensor.shape.get(1)
+
+    var offsettensorA = 0
+    var offsetMult = 0
+    var offsetOut = 0
+
+    while (offsetOut < outTensor.shape.volume) {
+        var result: Float
+        for (row in 0..outTensor.shape.get(0)-1) {
+            for (column in 0..outTensor.shape.get(1)-1) {
+                result = 0f
+                for (i in 0..tensorA.shape.get(1)-1) {
+                    //Switch the indices for tensor B
+                    result += tensorA.elements[tensorA.calcIndex(intArrayOf(row, i)) + offsettensorA] * tensorB.elements[tensorB.calcIndex(intArrayOf(column, i)) + offsetMult]
                 }
                 outTensor.elements[outTensor.calcIndex(intArrayOf(row, column)) + offsetOut] = result
             }
