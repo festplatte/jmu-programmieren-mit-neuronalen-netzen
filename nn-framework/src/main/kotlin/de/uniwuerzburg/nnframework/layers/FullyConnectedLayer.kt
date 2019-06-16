@@ -30,6 +30,7 @@ class FullyConnectedLayer(private val inShape: Shape,
 
     override val outputShape get() = outShape
 
+
     /*
     * The forward pass fills the elements of the outTensors,
     * while having access to the elements in inTensors:
@@ -55,12 +56,13 @@ class FullyConnectedLayer(private val inShape: Shape,
     /*
     * The backward pass fills in the deltas of the inTensors,
     * while having access to the deltas in outTensors as well as to the elements of the inTensors
+    * deltaX = deltaY * W^T
     */
     override fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>) {
         for (i in inTensors.indices){
             val inTensor = inTensors.get(i)
             val outTensor = outTensors.get(i)
-            //use deltas of the first and the last Param
+            //use deltas of the outTensor and write the result to the deltas of the inTensor
             multAndTransposeSecond(outTensor,weightmatrix,inTensor,
                     tensorA_useDeltas = true,tensorB_useDeltas = false, outTensor_useDeltas = true)
         }
@@ -69,9 +71,31 @@ class FullyConnectedLayer(private val inShape: Shape,
     /*
     * The calculateDeltaWeights function calculates the delta weights by
     * using the elements of the inTensors and the deltas of the outTensors
+    * DeltaBias = DeltaY
+    * DeltaW = X^T * DeltaY
+    *
+    * If the list contains more than one element, the update values are summed up and averaged at the end
     */
     override fun calculateDeltaWeights(outTensors: List<Tensor>, inTensors: List<Tensor>) {
-        // TODO berechne die Deltas der Gewichte mit Hilfe der Deltas der outTensors und Daten der inTensors
+        val biasDeltas = FloatArray(bias.shape.volume)
+        for (i in inTensors.indices){
+            val inTensor = inTensors.get(i)
+            val outTensor = outTensors.get(i)
+
+            // Add the delta weights for the bias and add them
+            val currentBiasDeltas = outTensor.deltas
+            for (j in 0 until currentBiasDeltas.size){
+                biasDeltas[j] += currentBiasDeltas[j]
+            }
+
+            //Calculate the delta weight for W and add them
+            multAndTransposeFirst(inTensor, outTensor, weightmatrix,
+                    tensorA_useDeltas = false, tensorB_useDeltas = true, outTensor_useDeltas = true,
+                    outTensor_sumUp = true)
+        }
+
+        // The weight deltas are already filled but the bias deltas still net to be written
+        bias.setDeltas(biasDeltas)
     }
 
     fun setWeightsForTesting(bias:Tensor, weights:Tensor){

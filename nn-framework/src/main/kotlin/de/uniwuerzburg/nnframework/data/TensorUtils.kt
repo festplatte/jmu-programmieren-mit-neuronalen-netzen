@@ -46,6 +46,19 @@ fun mult(tensorA: Tensor, tensorB: Tensor): Tensor {
     return resultTensor
 }
 
+fun multAndTransposeFirst(tensorA: Tensor, tensorB: Tensor,
+                           tensorA_useDeltas: Boolean = false, tensorB_useDeltas: Boolean = false): Tensor {
+    val dimensions = mutableListOf(tensorA.shape.get(1))
+    if (tensorB.shape.dimensions > 1) dimensions.add(tensorB.shape.get(1))
+    // TODO kopiere weitere Dimensionen für 2+ dimensionale Tensoren
+
+    val resultShape = Shape(dimensions.toIntArray())
+    val resultTensor = Tensor(resultShape, FloatArray(resultShape.volume))
+    multAndTransposeFirst(tensorA, tensorB, resultTensor, tensorA_useDeltas, tensorB_useDeltas, false)
+
+    return resultTensor
+}
+
 fun multAndTransposeSecond(tensorA: Tensor, tensorB: Tensor,
                            tensorA_useDeltas: Boolean = false, tensorB_useDeltas: Boolean = false): Tensor {
     val dimensions = mutableListOf(tensorA.shape.get(0))
@@ -95,12 +108,79 @@ fun mult(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor) {
     }
 }
 
+/**
+ * Multipliziert zwei Tensoren, wobei der erste Tensor dabei transponiert wird.
+ * Es wird Matrixmultiplikation in den ersten beiden Dimensionen angewendet.
+ * Über evtl. weitere Dimensionen wird nur iteriert.
+ * Falls useDeltas auf true gesetzt wird, wird anstelle des element-Arrays mit dem delta-Array gearbeitet
+ */
+fun multAndTransposeFirst(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor,
+                           tensorA_useDeltas: Boolean = false, tensorB_useDeltas: Boolean = false,
+                           outTensor_useDeltas: Boolean =false, outTensor_sumUp: Boolean = false) {
+
+    if (tensorA.shape.get(0) != tensorB.shape.get(0)) {
+        throw IllegalArgumentException("rows of tensorA must be equal the rows of tensorB (as it is transposed)")
+    }
+
+    val voltensorAMatrix = tensorA.shape.get(0) * tensorA.shape.get(1)
+    val volMultMatrix = tensorB.shape.get(0) * tensorB.shape.get(1)
+    val volOutMatrix = outTensor.shape.get(0) * outTensor.shape.get(1)
+
+    var offsettensorA = 0
+    var offsetMult = 0
+    var offsetOut = 0
+
+    while (offsetOut < outTensor.shape.volume) {
+        var result: Float
+        for (row in 0..outTensor.shape.get(0)-1) {
+            for (column in 0..outTensor.shape.get(1)-1) {
+                result = 0f
+                for (i in 0..tensorA.shape.get(0)-1) { //get(0) because of transposition!
+                    //Switch the indices for tensor A
+                    if(tensorA_useDeltas && tensorB_useDeltas){
+                        println("Attention: This case should actually never occur")
+                        result += tensorA.deltas[tensorA.calcIndex(intArrayOf(i, row)) + offsettensorA] * tensorB.deltas[tensorB.calcIndex(intArrayOf(i, column)) + offsetMult]
+                    }else if(tensorA_useDeltas){
+                        result += tensorA.deltas[tensorA.calcIndex(intArrayOf(i, row)) + offsettensorA] * tensorB.elements[tensorB.calcIndex(intArrayOf(i, column)) + offsetMult]
+                    }else if(tensorB_useDeltas){
+                        result += tensorA.elements[tensorA.calcIndex(intArrayOf(i, row)) + offsettensorA] * tensorB.deltas[tensorB.calcIndex(intArrayOf(i, column)) + offsetMult]
+                    }else{
+                        // No deltas involved
+                        result += tensorA.elements[tensorA.calcIndex(intArrayOf(i, row)) + offsettensorA] * tensorB.elements[tensorB.calcIndex(intArrayOf(i, column)) + offsetMult]
+                    }
+
+                }
+                if(!outTensor_useDeltas){
+                    if(!outTensor_sumUp){
+                        outTensor.elements[outTensor.calcIndex(intArrayOf(row, column)) + offsetOut] = result
+                    }else{
+                        outTensor.elements[outTensor.calcIndex(intArrayOf(row, column)) + offsetOut] += result
+                    }
+
+                }else{
+                    if(!outTensor_sumUp){
+                        outTensor.deltas[outTensor.calcIndex(intArrayOf(row, column)) + offsetOut] = result
+                    }else{
+                        outTensor.deltas[outTensor.calcIndex(intArrayOf(row, column)) + offsetOut] += result
+                    }
+
+                }
+            }
+        }
+
+        offsettensorA += voltensorAMatrix
+        offsetMult += volMultMatrix
+        offsetOut += volOutMatrix
+    }
+}
+
+
 
 /**
  * Multipliziert zwei Tensoren, wobei der zweite Tensor dabei transponiert wird.
  * Es wird Matrixmultiplikation in den ersten beiden Dimensionen angewendet.
  * Über evtl. weitere Dimensionen wird nur iteriert.
- * Falls useDeltas auf true gesetzt wird, wird mit dem delta-Array gearbeitet anstelle des element-Arrays
+ * Falls useDeltas auf true gesetzt wird, wird anstelle des element-Arrays mit dem delta-Array gearbeitet
  */
 fun multAndTransposeSecond(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor,
                            tensorA_useDeltas: Boolean = false, tensorB_useDeltas: Boolean = false,
@@ -110,8 +190,7 @@ fun multAndTransposeSecond(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor,
     }
 
     val voltensorAMatrix = tensorA.shape.get(0) * tensorA.shape.get(1)
-    //Switch the indices for tensor B
-    val volMultMatrix = tensorB.shape.get(1) * tensorB.shape.get(0)
+    val volMultMatrix = tensorB.shape.get(0) * tensorB.shape.get(1)
     val volOutMatrix = outTensor.shape.get(0) * outTensor.shape.get(1)
 
     var offsettensorA = 0
