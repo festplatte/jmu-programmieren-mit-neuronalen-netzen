@@ -4,7 +4,7 @@ import java.util.*
 import de.uniwuerzburg.nnframework.mapInPlace
 
 /*
-* vb: in work -> add initWeights and print functionalities
+* vb: in work -> add mult with transposed
 * */
 
 fun add(tensorA: Tensor, tensorB: Tensor): Tensor {
@@ -85,7 +85,7 @@ fun mult(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor) {
  * Initialisiert die Elemente des uebergebenen Tensors mit gleichverteilt, zufaelligen Werten zwischen -1 und 1
  */
 fun initializeWeights(tensor:Tensor){
-    tensor.elements.mapInPlace {Float ->
+    tensor.elements.mapInPlace {_ ->
         //ThreadLocalRandom.current().nextFloat()}
         if(Random().nextDouble()<0.5){
             Random().nextFloat()
@@ -104,7 +104,7 @@ fun printTensor(tensor: Tensor){
         for (element in tensor.elements.iterator()){
             output = output + element + ", "
         }
-        output = output.subSequence(0, output.length-2).toString() + ")"
+        output = output.subSequence(0, output.length-2).toString() + ")^T"
         println(output)
     }
     else if(tensor.shape.dimensions == 2)
