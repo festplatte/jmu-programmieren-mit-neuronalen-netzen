@@ -57,7 +57,13 @@ class FullyConnectedLayer(private val inShape: Shape,
     * while having access to the deltas in outTensors as well as to the elements of the inTensors
     */
     override fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>) {
-        // TODO berechne die deltas der inTensors mit den deltas der outTensors und Daten beider Tensoren
+        for (i in inTensors.indices){
+            val inTensor = inTensors.get(i)
+            val outTensor = outTensors.get(i)
+            //use deltas of the first and the last Param
+            multAndTransposeSecond(outTensor,weightmatrix,inTensor,
+                    tensorA_useDeltas = true,tensorB_useDeltas = false, outTensor_useDeltas = true)
+        }
     }
 
     /*

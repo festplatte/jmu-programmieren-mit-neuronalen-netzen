@@ -32,7 +32,7 @@ class TensorUtilsTest {
     @Test
     fun testMultWithTransposed() {
         // (1x3)*(2x3)^T
-        val result1 = multWithTransposed(row_vector_tranposition, matrix__tranposition)
+        val result1 = multAndTransposeSecond(row_vector_tranposition, matrix__tranposition)
 
         Assert.assertEquals(result1.shape.dimensions, 2)
         Assert.assertEquals(result1.shape.get(0), 1)
@@ -42,10 +42,9 @@ class TensorUtilsTest {
         Assert.assertEquals(result1.get(0,1), -0.1442f, EPSILON)
 
         // (2x3)*(1x3)^T
-        val result2 = multWithTransposed(matrix__tranposition,row_vector_tranposition)
-        printTensor((result2))
+        val result2 = multAndTransposeSecond(matrix__tranposition,row_vector_tranposition)
         //Assert.assertEquals(result2.shape.dimensions, 1)
-        //Assert.assertEquals(result2.shape.get(0), 2)
+        Assert.assertEquals(result2.shape.get(0), 2)
 
         Assert.assertEquals(result2.get(0), -0.1777f, EPSILON)
         Assert.assertEquals(result2.get(1), -0.1442f, EPSILON)

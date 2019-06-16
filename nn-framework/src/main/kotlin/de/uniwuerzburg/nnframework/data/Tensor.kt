@@ -54,4 +54,16 @@ class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volum
     fun set(value: Float, vararg indices: Int) {
         elements[calcIndex(indices)] = value
     }
+
+    /**
+     * Die Funktion kann genutzt werden, um die Deltas beim Testen manuell zu setzen
+     */
+    fun setDeltasForTesting(deltas: FloatArray){
+        if(deltas.size != this.deltas.size){
+            throw IllegalArgumentException("The delta array size does have the right size")
+        }
+        for (i in 0 until deltas.size){
+            this.deltas[i] = deltas[i]
+        }
+    }
 }
