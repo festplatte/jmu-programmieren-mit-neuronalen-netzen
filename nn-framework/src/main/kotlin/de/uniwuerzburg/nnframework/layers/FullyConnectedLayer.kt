@@ -7,7 +7,7 @@ import de.uniwuerzburg.nnframework.data.*
  */
 
 /**
- * Die Tensoren haben war eine Shape, inShape und outShape sind aber zur Initialisierung der Weightmatrix
+ * Die Tensoren haben zwar eine Shape, inShape und outShape sind aber zur Initialisierung der Weightmatrix
  */
 class FullyConnectedLayer(private val inShape: Shape,
                           private val outShape: Shape) : WeightLayer {
@@ -39,12 +39,7 @@ class FullyConnectedLayer(private val inShape: Shape,
         for (i in inTensors.indices){
             val inTensor = inTensors.get(i)
             val outTensor = outTensors.get(i)
-            println("In Tensor:")
-            printTensor(inTensor)
-            println("Weightmatrix:")
-            printTensor(weightmatrix)
             mult(inTensor, weightmatrix, outTensor)
-            printTensor(outTensor)
             add(outTensor,bias, outTensor)
         }
 
@@ -76,11 +71,5 @@ class FullyConnectedLayer(private val inShape: Shape,
     fun setWeightsForTesting(bias:Tensor, weights:Tensor){
         this.bias = bias
         this.weightmatrix = weights
-        /*
-        println("Bias:")
-        printTensor(this.bias)
-        println("Weights:")
-        printTensor(weightmatrix)
-        */
     }
 }
