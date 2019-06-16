@@ -19,6 +19,10 @@ fun add(tensorA: Tensor, tensorB: Tensor): Tensor {
  * Addiert Vektoren, d.h. nur die erste Dimension der Tensoren wird addiert.
  */
 fun add(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor) {
+    if (!tensorA.shape.axis.contentEquals(tensorB.shape.axis) || !tensorA.shape.axis.contentEquals(outTensor.shape.axis)) {
+        throw IllegalArgumentException("shapes of all tensors need to be equal")
+    }
+
     val volume = outTensor.shape.get(0)
     var offset = 0
 
@@ -47,6 +51,10 @@ fun mult(tensorA: Tensor, tensorB: Tensor): Tensor {
  * Über evtl. weitere Dimensionen wird nur iteriert.
  */
 fun mult(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor) {
+    if (tensorA.shape.get(1) != tensorB.shape.get(0)) {
+        throw IllegalArgumentException("colums of tensorA must be equal to rows of tensorB")
+    }
+
     val voltensorAMatrix = tensorA.shape.get(0) * tensorA.shape.get(1)
     val volMultMatrix = tensorB.shape.get(0) * tensorB.shape.get(1)
     val volOutMatrix = outTensor.shape.get(0) * outTensor.shape.get(1)

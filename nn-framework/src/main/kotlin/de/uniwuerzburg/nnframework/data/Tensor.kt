@@ -7,6 +7,12 @@ package de.uniwuerzburg.nnframework.data
 class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volume)) {
     val deltas: FloatArray by lazy { FloatArray(shape.volume) }
 
+    init {
+        if (elements.size != shape.volume) {
+            throw IllegalArgumentException("elements must be of the same size as shape")
+        }
+    }
+
     /**
      * Berechnet den Index an der angegebenen Position. Für jede Dimension bzw. Achse des Tensors muss ein Zugriffswert geliefert werden.
      *
