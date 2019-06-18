@@ -3,6 +3,7 @@ package de.uniwuerzburg.nnframework
 import de.uniwuerzburg.nnframework.data.Tensor
 import de.uniwuerzburg.nnframework.layers.InputLayer
 import de.uniwuerzburg.nnframework.layers.Layer
+import de.uniwuerzburg.nnframework.layers.WeightLayer
 
 /**
  * Netzwerk führt Forward-, Backward-Pass und Weightupdates auf den Layern aus.
@@ -64,9 +65,10 @@ class Network<T>(private val input: InputLayer<T>,
             val inputData = dataMap[prevLayer] ?: throw IllegalArgumentException("no outputData for layer")
 
             layer.backward(outputData, inputData)
+            if (layer is WeightLayer) {
+                layer.calculateDeltaWeights(outputData, inputData)
+            }
         }
-
-        // TODO calculateDeltaWeights der Layer
     }
 
 }

@@ -19,7 +19,7 @@ class FullyConnectedLayer(private val inShape: Shape,
     // For each element in the inTensor there is a connection to each element of the outTensor
     // If the inshape has more than one dimensions, the shape needs to be flattened to a vector
     private var weightmatrix_shape = Shape(intArrayOf(inShape.volume, outShape.volume))
-    private var weightmatrix: Tensor = Tensor(weightmatrix_shape, FloatArray(weightmatrix_shape.volume))
+    private var weightmatrix: Tensor = Tensor(weightmatrix_shape)
 
 
     init {

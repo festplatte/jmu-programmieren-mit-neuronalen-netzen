@@ -9,7 +9,7 @@ class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volum
 
     init {
         if (elements.size != shape.volume) {
-            throw IllegalArgumentException("elements must be of the same size as shape")
+            throw IllegalArgumentException("elements size must match the volume of shape")
         }
     }
 

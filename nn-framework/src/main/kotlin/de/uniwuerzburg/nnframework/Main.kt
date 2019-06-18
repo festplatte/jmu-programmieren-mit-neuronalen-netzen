@@ -4,40 +4,47 @@ import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
 import de.uniwuerzburg.nnframework.data.initializeWeights
 import de.uniwuerzburg.nnframework.data.printTensor
-import de.uniwuerzburg.nnframework.layers.FullyConnectedLayer
+import de.uniwuerzburg.nnframework.layers.*
+import de.uniwuerzburg.nnframework.loss.CrossEntropyLoss
 import java.io.File
 
 fun main(args: Array<String>) {
-    /*
-    val mnistData = readFiles("/path/to/mnistfiles")
-    val img = mnistData.keys.first()
-    println(img)
-    println(mnistData[img])
-    */
-    /*
-    val test = Tensor(Shape(intArrayOf(3)), FloatArray(3))
-    initializeWeights(test)
-    printTensor(test)
+    val mnistData = readFiles("/Users/michaelgabler/Repositories/jmu-machine-learning-for-nlp/exercise-3/MNIST PyTorch/data/test")
+//    println(img)
+//    println(mnistData[img])
 
-    val test2 = Tensor(Shape(intArrayOf(3,2)), FloatArray(6))
-    initializeWeights(test2)
-    printTensor(test2)
-    */
-
+    val network = Network(ImageStringInputLayer(), listOf(
+            FlatternLayer(Shape(intArrayOf(1, 784))),
+            FullyConnectedLayer(Shape(intArrayOf(1, 784)), Shape(intArrayOf(1, 512))),
+            SigmoidActivation(Shape(intArrayOf(1, 512))),
+            FullyConnectedLayer(Shape(intArrayOf(1, 512)), Shape(intArrayOf(1, 10))),
+            SoftmaxLayer(Shape(intArrayOf(1, 10)))
+    ))
+    val trainer = SGDTrainer(32, 0.1f, 10, CrossEntropyLoss(), true, SGDFlavor.STOCHASTIC_GRADIENT_DESCENT)
+    trainer.optimize(network, mnistData)
 }
 
-fun readFiles(path: String): Map<String, Int> {
+fun readFiles(path: String): Map<String, Tensor> {
     val dir = File(path)
-    val result = LinkedHashMap<String, Int>()
+    val result = LinkedHashMap<String, Tensor>()
     if (dir.isDirectory) {
         dir.listFiles().filter { !it.isDirectory && it.absolutePath.endsWith(".image") }.forEach { imageFile ->
             val labelFile = File(imageFile.absolutePath.replace(".image", ".label"))
             if (labelFile.exists()) {
                 val image = imageFile.readText()
                 val label = labelFile.readText().toInt()
-                result.put(image, label)
+                result.put(image, mapLabelToTensor(label, 10))
             }
         }
     }
     return result
+}
+
+fun mapLabelToTensor(label: Int, amountLabels: Int): Tensor {
+    val elements = FloatArray(amountLabels)
+    for (i in 0 until elements.size) {
+        elements[i] = if (label == i + 1) 1f else 0f
+    }
+    return Tensor(Shape(intArrayOf(1, amountLabels)), elements)
+
 }

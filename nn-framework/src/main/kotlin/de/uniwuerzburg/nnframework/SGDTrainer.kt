@@ -16,7 +16,7 @@ class SGDTrainer(private val batchSize: Int = 1,
      * @param network das zu trainierende Netzwerk
      * @param data die Trainigsdaten mit Zielwerten (Labels)
      */
-    fun <T> optimize(network: Network<T>, data: LinkedHashMap<T, Tensor>) {
+    fun <T> optimize(network: Network<T>, data: Map<T, Tensor>) {
         var dataList = data.keys.toList()
         if (shuffle) dataList = dataList.shuffled()
 
