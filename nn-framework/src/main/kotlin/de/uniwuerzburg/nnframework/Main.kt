@@ -9,7 +9,8 @@ import de.uniwuerzburg.nnframework.loss.CrossEntropyLoss
 import java.io.File
 
 fun main(args: Array<String>) {
-    val mnistData = readFiles("/Users/michaelgabler/Repositories/jmu-machine-learning-for-nlp/exercise-3/MNIST PyTorch/data/test")
+    //val mnistData = readFiles("/Users/michaelgabler/Repositories/jmu-machine-learning-for-nlp/exercise-3/MNIST PyTorch/data/test")
+    val mnistData = readFiles("C:/Users/simon/Documents/Master/MnistData/MNIST-Data/test")
 //    println(img)
 //    println(mnistData[img])
 
@@ -20,7 +21,7 @@ fun main(args: Array<String>) {
             FullyConnectedLayer(Shape(intArrayOf(1, 512)), Shape(intArrayOf(1, 10))),
             SoftmaxLayer(Shape(intArrayOf(1, 10)))
     ))
-    val trainer = SGDTrainer(32, 0.1f, 10, CrossEntropyLoss(), true, SGDFlavor.STOCHASTIC_GRADIENT_DESCENT)
+    val trainer = SGDTrainer(32, 0.001f, 10, CrossEntropyLoss(), true, SGDFlavor.STOCHASTIC_GRADIENT_DESCENT)
     trainer.optimize(network, mnistData)
 }
 

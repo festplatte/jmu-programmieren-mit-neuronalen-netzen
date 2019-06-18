@@ -1,6 +1,7 @@
 package de.uniwuerzburg.nnframework
 
 import de.uniwuerzburg.nnframework.data.Tensor
+import de.uniwuerzburg.nnframework.layers.FullyConnectedLayer
 import de.uniwuerzburg.nnframework.layers.InputLayer
 import de.uniwuerzburg.nnframework.layers.Layer
 import de.uniwuerzburg.nnframework.layers.WeightLayer
@@ -18,7 +19,27 @@ class Network<T>(private val input: InputLayer<T>,
     private val dataMap = LinkedHashMap<Layer, List<Tensor>>()
 
 
-    // TODO methode für Weightupdates
+    fun updateWeights(updateMechanism: SGDFlavor, learningRate: Float){
+        if (updateMechanism == SGDFlavor.STOCHASTIC_GRADIENT_DESCENT) {
+            for(layer in layers){
+                if(layer is FullyConnectedLayer){
+                    //Update Bias
+                    for(i in layer.bias.deltas.indices){
+                        layer.bias.elements[i] -= learningRate * layer.bias.deltas[i]
+                        layer.bias.deltas[i] = 0f
+                    }
+                    //Update weightmatrix
+                    for(i in layer.weightmatrix.deltas.indices){
+                        layer.weightmatrix.elements[i] -= learningRate * layer.weightmatrix.deltas[i]
+                        layer.weightmatrix.deltas[i] = 0f
+                    }
+                }
+            }
+        }
+        else if(updateMechanism == SGDFlavor.ADAM){
+            //TO-DO
+        }
+    }
 
     /**
      * Führt den Forward-Pass durch und gibt die Ausgabe des letzten Layers zurück.

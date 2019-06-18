@@ -7,10 +7,12 @@ import de.uniwuerzburg.nnframework.data.Tensor
  * Transformiert Strings mit Helligkeitwerten in Tensoren.
  */
 class ImageStringInputLayer: InputLayer<String> {
-    private val ROW_SPLIT = System.lineSeparator()
+    private val ROW_SPLIT = 10.toChar().toString()
+    //private val ROW_SPLIT = System.lineSeparator()
     private val COLUMN_SPLIT = " "
 
     override fun forward(rawDataList: List<String>): List<Tensor> {
+        println(ROW_SPLIT)
         return rawDataList.map { data ->
             val valuesList = data.split(ROW_SPLIT).map { row -> row.split(COLUMN_SPLIT).map { it.toFloat() } }
             val shape = Shape(intArrayOf(valuesList.size, valuesList[0].size))

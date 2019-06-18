@@ -34,6 +34,7 @@ class SGDTrainer(private val batchSize: Int = 1,
                 lossFkt.differentiate(forwardOutput, batchLabels)
                 network.backprop(forwardOutput)
                 // TODO update weights
+                network.updateWeights(updateMechanism, learningRate)
 
                 println("Epoch: $epoch - Data: $processedData/${dataList.size} - Loss: $loss")
 
@@ -43,5 +44,6 @@ class SGDTrainer(private val batchSize: Int = 1,
 
         println("Training finished")
     }
+
 
 }
