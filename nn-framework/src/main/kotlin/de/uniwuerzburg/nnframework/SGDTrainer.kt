@@ -35,7 +35,6 @@ class SGDTrainer(private val batchSize: Int = 1,
                 val accuracy = calcAccuracy(forwardOutput, batchLabels)
                 lossFkt.differentiate(forwardOutput, batchLabels)
                 network.backprop(forwardOutput)
-                // TODO update weights
                 network.updateWeights(updateMechanism, learningRate)
 
                 println("Epoch: $epoch - Data: $processedData/${dataList.size} - Loss: $loss - Accuracy: $accuracy")
@@ -45,6 +44,21 @@ class SGDTrainer(private val batchSize: Int = 1,
         }
 
         println("Training finished")
+    }
+
+    /**
+     * Validiert das Netzwerk mit Testdaten und gibt den Loss und die Accuracy aus.
+     * @param network Netzwerk
+     * @param data Testdaten mit Labels
+     */
+    fun <T> validate(network: Network<T>, data: Map<T, Tensor>) {
+        val dataList = data.keys.toList()
+        val labelsList = data.values.toList()
+
+        val forwardOutput = network.forward(dataList)
+        val loss = lossFkt.calculate(forwardOutput, labelsList)
+        val accuracy = calcAccuracy(forwardOutput, labelsList)
+        println("Validation finished - Loss: $loss - Accuracy: $accuracy")
     }
 
     /**

@@ -2,8 +2,6 @@ package de.uniwuerzburg.nnframework
 
 import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
-import de.uniwuerzburg.nnframework.data.initializeWeights
-import de.uniwuerzburg.nnframework.data.printTensor
 import de.uniwuerzburg.nnframework.layers.*
 import de.uniwuerzburg.nnframework.loss.CrossEntropyLoss
 import java.io.File
@@ -11,10 +9,8 @@ import java.io.File
 fun main(args: Array<String>) {
     //val mnistData = readFiles("/Users/michaelgabler/Repositories/jmu-machine-learning-for-nlp/exercise-3/MNIST PyTorch/data/test")
     //val mnistData = readFiles("C:/Users/simon/Documents/Master/MnistData/MNIST-Data/test")
-    val mnistData = readFiles("C:/Users/Simon Englert/Documents/Studium/ML for NLP/MNIST PyTorch/data/test")
-
-//    println(img)
-//    println(mnistData[img])
+    val mnistTrain = readFiles("C:/Users/Simon Englert/Documents/Studium/ML for NLP/MNIST PyTorch/data/train")
+    val mnistTest = readFiles("C:/Users/Simon Englert/Documents/Studium/ML for NLP/MNIST PyTorch/data/test")
 
     val network = Network(ImageStringInputLayer(), listOf(
             FlatternLayer(Shape(intArrayOf(1, 784))),
@@ -24,7 +20,8 @@ fun main(args: Array<String>) {
             SoftmaxLayer(Shape(intArrayOf(1, 10)))
     ))
     val trainer = SGDTrainer(256, 0.001f, 10, CrossEntropyLoss(), true, SGDFlavor.STOCHASTIC_GRADIENT_DESCENT)
-    trainer.optimize(network, mnistData)
+    trainer.optimize(network, mnistTrain)
+    trainer.validate(network, mnistTest)
 }
 
 fun readFiles(path: String): Map<String, Tensor> {
