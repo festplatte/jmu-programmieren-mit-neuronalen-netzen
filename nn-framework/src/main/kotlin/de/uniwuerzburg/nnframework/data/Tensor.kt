@@ -64,6 +64,15 @@ class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volum
     }
 
     /**
+     * Setzt das Element des Delta-Tensors an der gegebenen Position.
+     * @param value zu setzender Wert
+     * @param indices der Zugriffs-Index für jede Dimension/Achse
+     */
+    fun setDelta(value: Float, vararg indices: Int) {
+        deltas[calcIndex(indices)] = value
+    }
+
+    /**
      * Die Funktion kann genutzt werden, um die Deltas des Tensors zu setzen
      */
     fun setDeltas(deltas: FloatArray){

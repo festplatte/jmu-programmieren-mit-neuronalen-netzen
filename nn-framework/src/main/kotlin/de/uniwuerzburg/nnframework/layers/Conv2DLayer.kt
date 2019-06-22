@@ -63,8 +63,6 @@ class Conv2DLayer(private val inputShape: Shape,
         // Initialize the weights
         initializeWeights(bias)
         initializeWeights(kernel)
-        transposeDepthAndAmountOfFilters(kernel, transposedKernel)
-        rotateBy180Degrees(transposedKernel, rotatedTransposedKernel)
     }
 
 
@@ -99,14 +97,17 @@ class Conv2DLayer(private val inputShape: Shape,
     *       *: full convolution operator for images with a depth
     */
     override fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>) {
-        /*
+        //Prepare the filter for rhe backward pass
+        transposeDepthAndAmountOfFilters(kernel, transposedKernel)
+        rotateBy180Degrees(transposedKernel, rotatedTransposedKernel)
+
         for (i in inTensors.indices){
             val inTensor = inTensors.get(i)
             val outTensor = outTensors.get(i)
             //use deltas of the outTensor and write the result to the deltas of the inTensor
-            multAndTransposeSecond(outTensor,weightmatrix,inTensor,
-                    tensorA_useDeltas = true,tensorB_useDeltas = false, outTensor_useDeltas = true)
-        }*/
+            fullConvolve(inTensor = outTensor, kernel = rotatedTransposedKernel, outTensor = inTensor,
+                         inTensor_useDeltas = true, outTensor_useDeltas = true)
+        }
     }
 
     /*
@@ -142,7 +143,8 @@ class Conv2DLayer(private val inputShape: Shape,
     }
 
     /**
-     * This function returns the result of applying the convolution operator without padding for images with depth
+     * This function writes the result of applying the convolution operator without padding for images with depth
+     * to the elements of the outTensor
      * A 2-d convolution ‘convolves’ along two spatial dimensions.
      * It has a really small kernel, essentially a window of pixel values, that slides along those two dimensions.
      * The rgb channel isn't handled as small window of depth, but obtained from beginning to end (first channel to last)
@@ -234,14 +236,16 @@ class Conv2DLayer(private val inputShape: Shape,
     }
 
     /**
-     * This function returns the result of applying the full convolution operator (full padding) for images with depth
+     * This function writes the result of applying the full convolution operator (full padding) for images with depth
+     * to the elements or the deltas of the outTensor (depending on the outTensor_useDeltas parameter)
      * A 2-d convolution ‘convolves’ along two spatial dimensions.
      * It has a really small kernel, essentially a window of pixel values, that slides along those two dimensions.
      * The rgb channel isn't handled as small window of depth, but obtained from beginning to end (first channel to last)
      * That is, even a convolution with a small spatial window of 1x1, which takes a single pixel spatially in the
      * width/height dimensions, would still take all 3 RGB channels
      */
-    private fun fullConvolve(inTensor: Tensor, kernel: Tensor, outTensor: Tensor){
+    private fun fullConvolve(inTensor: Tensor, kernel: Tensor, outTensor: Tensor,
+                             inTensor_useDeltas: Boolean = false, outTensor_useDeltas: Boolean = false){
         val inputHeight = inTensor.shape.get(0)
         val inputWidth = inTensor.shape.get(1)
         val filterHeight = kernel.shape.get(0)
@@ -259,30 +263,38 @@ class Conv2DLayer(private val inputShape: Shape,
             // Iterate through all possible positions of the filter (full padding!)
             // Every possible partial or complete superimposition of the kernel on the input map is taken into account
             for (input_row in 0 until paddedInputHeight - filterHeight + 1){
-                for(input_col in 0 until paddedInputWidth - filterWidth + 1){
+                for(input_col in 0 until paddedInputWidth - filterWidth + 1) {
                     //Apply the filter for each element in x, y and z direction
                     var y_i = 0f
-                    for(filter_row in 0 until filterHeight){
-                        for (filter_col in 0 until filterWidth){
-                            for (channel in 0 until imageDepth){
+                    for (filter_row in 0 until filterHeight) {
+                        for (filter_col in 0 until filterWidth) {
+                            for (channel in 0 until imageDepth) {
                                 // Ignore everything outside the input map (would be 0 anyway)
                                 // -> ignore input samples which are out of bound
-                                val current_row_in_orig_input = input_row + filter_row - paddingHeight
-                                val current_col_in_orig_input = input_col + filter_col - paddingWidth
-                                if(current_row_in_orig_input in 0 until inputHeight  &&
-                                        current_col_in_orig_input in 0 until inputWidth){
-                                    y_i += inTensor.get(current_row_in_orig_input, current_col_in_orig_input, channel) *
-                                            kernel.get(filter_row, filter_col, channel, filter)
+                                val curr_row_in_orig_input = input_row + filter_row - paddingHeight
+                                val curr_col_in_orig_input = input_col + filter_col - paddingWidth
+                                if (curr_row_in_orig_input in 0 until inputHeight &&
+                                        curr_col_in_orig_input in 0 until inputWidth) {
+                                    if (inTensor_useDeltas) {
+                                        y_i += inTensor.getDelta(curr_row_in_orig_input, curr_col_in_orig_input, channel) *
+                                                kernel.get(filter_row, filter_col, channel, filter)
+                                    } else {
+                                        y_i += inTensor.get(curr_row_in_orig_input, curr_col_in_orig_input, channel) *
+                                                kernel.get(filter_row, filter_col, channel, filter)
+                                    }
                                 }
                             }
                         }
+                        // Write result of filter application to the outTensor
+                        if (outTensor_useDeltas) {
+                            outTensor.setDelta(y_i, input_row, input_col, filter)
+                        } else {
+                            outTensor.set(y_i, input_row, input_col, filter)
+                        }
                     }
-                    // Write result of filter application to the outTensor
-                    outTensor.set(y_i, input_row, input_col, filter)
                 }
             }
         }
-
     }
 
     /**
