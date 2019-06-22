@@ -268,8 +268,34 @@ fun printTensor(tensor: Tensor){
             }
             println()
         }
+    }else if(tensor.shape.dimensions == 3){
+        for(channel in 0 until tensor.shape.get(2)){
+            println("Channel " + channel.toString() + ":")
+            for (x in 0 until tensor.shape.get(0)){
+                for (y in 0 until tensor.shape.get(1)){
+                    print(tensor.get(x,y, channel))
+                    print("\t\t")
+                }
+                println()
+            }
+        }
+    }else if(tensor.shape.dimensions == 4){
+        for (filter in 0 until tensor.shape.get(3)){
+            println("Filter " + filter.toString() + ":")
+
+            for(channel in 0 until tensor.shape.get(2)){
+                println("Channel " + channel.toString() + ":")
+                for (x in 0 until tensor.shape.get(0)){
+                    for (y in 0 until tensor.shape.get(1)){
+                        print(tensor.get(x,y, channel, filter))
+                        print("\t\t")
+                    }
+                    println()
+                }
+            }
+        }
     }else{
-        //More than two dimensions
+        //More than three dimensions
         //TODO fill if needed
         println("Too many dimenstions for pretty print")
     }

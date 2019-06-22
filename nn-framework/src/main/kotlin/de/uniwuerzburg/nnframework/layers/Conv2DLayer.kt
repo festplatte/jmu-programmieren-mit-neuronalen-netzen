@@ -148,16 +148,16 @@ class Conv2DLayer(private val inputShape: Shape,
         val imageDepth = kernel.shape.get(2)       // = inTensor.shape.get(2)
 
         // Iterate through the number of filters
-        for (filter in 0 until kernel.shape.get(3)-1){
+        for (filter in 0 until kernel.shape.get(3)){
             // Iterate through all possible positions of the filter
             for (input_row in 0 until inputHeight-filterHeight+1){
                 for(input_col in 0 until inputWidth-filterWidth+1){
                     //Apply the filter for each element in x, y and z direction
                     var y_i = 0f
                     for(filter_row in 0 until filterHeight){
-                        for (filter_col in 0 until filter_row){
+                        for (filter_col in 0 until filterWidth){
                             for (channel in 0 until imageDepth){
-                                y_i += inTensor.get(input_row, input_col, channel) *
+                                y_i += inTensor.get(input_row + filter_row, input_col+filter_col, channel) *
                                         kernel.get(filter_row, filter_col, channel, filter)
                             }
                         }
