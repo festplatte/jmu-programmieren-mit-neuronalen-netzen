@@ -18,7 +18,7 @@ class Conv2DLayer(private val inputShape: Shape,
 
     // Create tensors for the filters and for the bias
     // There is one bias term for each filter
-    var bias: Tensor = Tensor(Shape(intArrayOf(1, numOfFilters)))
+    var bias: Tensor = Tensor(Shape(intArrayOf(numOfFilters))) //col_vector
 
     // The kernel tensor has one dimension more that the filter Shape, the additional dimension corresponds to the
     // number of filters dimensions.add(tensorB.shape.get(1)
@@ -71,13 +71,9 @@ class Conv2DLayer(private val inputShape: Shape,
         for (i in inTensors.indices){
             val inTensor = inTensors.get(i)
             val outTensor = outTensors.get(i)
-            /*
-            mult(inTensor, weightmatrix, outTensor)
-            add(outTensor,bias, outTensor)
-
-             */
+            convolve(inTensor, kernel, outTensor)
+            addBiasPerFilter(outTensor, bias)
         }
-
     }
 
     /*
@@ -128,9 +124,63 @@ class Conv2DLayer(private val inputShape: Shape,
         */
     }
 
+    /**
+     * This function can be used to explicitly set the weights during testing
+     */
     fun setWeightsForTesting(bias:Tensor, kernel:Tensor){
         this.bias = bias
         this.kernel = kernel
     }
 
+    /**
+     * This function returns the result of applying the convolution operator for images with depth
+     * A 2-d convolution ‘convolves’ along two spatial dimensions.
+     * It has a really small kernel, essentially a window of pixel values, that slides along those two dimensions.
+     * The rgb channel isn't handled as small window of depth, but obtained from beginning to end (first channel to last)
+     * That is, even a convolution with a small spatial window of 1x1, which takes a single pixel spatially in the
+     * width/height dimensions, would still take all 3 RGB channels
+     */
+    private fun convolve(inTensor: Tensor, kernel: Tensor, outTensor: Tensor){
+        val inputHeight = inTensor.shape.get(0)
+        val inputWidth = inTensor.shape.get(1)
+        val filterHeight = kernel.shape.get(0)
+        val filterWidth = kernel.shape.get(1)
+        val imageDepth = kernel.shape.get(2)       // = inTensor.shape.get(2)
+
+        // Iterate through the number of filters
+        for (filter in 0 until kernel.shape.get(3)-1){
+            // Iterate through all possible positions of the filter
+            for (input_row in 0 until inputHeight-filterHeight+1){
+                for(input_col in 0 until inputWidth-filterWidth+1){
+                    //Apply the filter for each element in x, y and z direction
+                    var y_i = 0f
+                    for(filter_row in 0 until filterHeight){
+                        for (filter_col in 0 until filter_row){
+                            for (channel in 0 until imageDepth){
+                                y_i += inTensor.get(input_row, input_col, channel) *
+                                        kernel.get(filter_row, filter_col, channel, filter)
+                            }
+                        }
+                    }
+                    // Write result of filter application to the outTensor
+                    outTensor.set(y_i, input_row, input_col, filter)
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Adds the bias to each filter output
+     */
+    private fun addBiasPerFilter(inAndOutTensor: Tensor, bias: Tensor){
+        for (filter in 0 until kernel.shape.get(3)){
+            for(row in 0 until inAndOutTensor.shape.get(0)){
+                for (col in 0 until inAndOutTensor.shape.get(1)){
+                    val y_i_new = inAndOutTensor.get(row, col, filter) + bias.get(filter)
+                    inAndOutTensor.set(y_i_new, row, col, filter)
+                }
+            }
+        }
+    }
 }

@@ -100,6 +100,9 @@ class FullyConnectedLayer(private val inShape: Shape,
         bias.setDeltas(biasDeltas)
     }
 
+    /**
+     * This function can be used to explicitly set the weights during testing
+     */
     fun setWeightsForTesting(bias:Tensor, weights:Tensor){
         this.bias = bias
         this.weightmatrix = weights
