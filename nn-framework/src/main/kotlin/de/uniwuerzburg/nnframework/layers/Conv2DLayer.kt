@@ -142,16 +142,6 @@ class Conv2DLayer(private val inputShape: Shape,
     }
 
     /**
-     * This function can be used to explicitly set the weights during testing
-     */
-    fun setWeightsForTesting(bias:Tensor, kernel:Tensor){
-        this.bias = bias
-        this.kernel = kernel
-        transposeDepthAndAmountOfFilters(this.kernel, this.transposedKernel)
-        rotateBy180Degrees(this.transposedKernel, this.rotatedTransposedKernel)
-    }
-
-    /**
      * This function returns the result of applying the convolution operator without padding for images with depth
      * A 2-d convolution ‘convolves’ along two spatial dimensions.
      * It has a really small kernel, essentially a window of pixel values, that slides along those two dimensions.
@@ -241,5 +231,74 @@ class Conv2DLayer(private val inputShape: Shape,
 
             }
         }
+    }
+
+    /**
+     * This function returns the result of applying the full convolution operator (full padding) for images with depth
+     * A 2-d convolution ‘convolves’ along two spatial dimensions.
+     * It has a really small kernel, essentially a window of pixel values, that slides along those two dimensions.
+     * The rgb channel isn't handled as small window of depth, but obtained from beginning to end (first channel to last)
+     * That is, even a convolution with a small spatial window of 1x1, which takes a single pixel spatially in the
+     * width/height dimensions, would still take all 3 RGB channels
+     */
+    private fun fullConvolve(inTensor: Tensor, kernel: Tensor, outTensor: Tensor){
+        val inputHeight = inTensor.shape.get(0)
+        val inputWidth = inTensor.shape.get(1)
+        val filterHeight = kernel.shape.get(0)
+        val filterWidth = kernel.shape.get(1)
+
+        val paddingHeight = filterHeight - 1
+        val paddingWidth = filterWidth -1
+        val paddedInputHeight = inputHeight + 2 * paddingHeight
+        val paddedInputWidth = inputWidth + 2 * paddingWidth
+
+        val imageDepth = kernel.shape.get(2)       // = inTensor.shape.get(2)
+
+        // Iterate through the number of filters
+        for (filter in 0 until kernel.shape.get(3)){
+            // Iterate through all possible positions of the filter (full padding!)
+            // Every possible partial or complete superimposition of the kernel on the input map is taken into account
+            for (input_row in 0 until paddedInputHeight - filterHeight + 1){
+                for(input_col in 0 until paddedInputWidth - filterWidth + 1){
+                    //Apply the filter for each element in x, y and z direction
+                    var y_i = 0f
+                    for(filter_row in 0 until filterHeight){
+                        for (filter_col in 0 until filterWidth){
+                            for (channel in 0 until imageDepth){
+                                // Ignore everything outside the input map (would be 0 anyway)
+                                // -> ignore input samples which are out of bound
+                                val current_row_in_orig_input = input_row + filter_row - paddingHeight
+                                val current_col_in_orig_input = input_col + filter_col - paddingWidth
+                                if(current_row_in_orig_input in 0 until inputHeight  &&
+                                        current_col_in_orig_input in 0 until inputWidth){
+                                    y_i += inTensor.get(current_row_in_orig_input, current_col_in_orig_input, channel) *
+                                            kernel.get(filter_row, filter_col, channel, filter)
+                                }
+                            }
+                        }
+                    }
+                    // Write result of filter application to the outTensor
+                    outTensor.set(y_i, input_row, input_col, filter)
+                }
+            }
+        }
+
+    }
+
+    /**
+     * This function can be used to explicitly set the weights during testing
+     */
+    fun setWeightsForTesting(bias:Tensor, kernel:Tensor){
+        this.bias = bias
+        this.kernel = kernel
+        transposeDepthAndAmountOfFilters(this.kernel, this.transposedKernel)
+        rotateBy180Degrees(this.transposedKernel, this.rotatedTransposedKernel)
+    }
+
+    /**
+     * This function is a wrapper around the fullConvolve function and can be used to test it
+     */
+    fun executeFullConvolve(inTensor: Tensor, kernel: Tensor, outTensor: Tensor){
+        fullConvolve(inTensor, kernel, outTensor)
     }
 }

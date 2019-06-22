@@ -2,8 +2,6 @@ package de.uniwuerzburg.nnframework.layers
 
 import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
-import de.uniwuerzburg.nnframework.data.initializeWeights
-import de.uniwuerzburg.nnframework.data.printTensor
 import org.testng.Assert
 import org.testng.annotations.Test
 
@@ -166,6 +164,58 @@ class Conv2D_Test {
         Assert.assertEquals(conv2D_layer2.rotatedTransposedKernel.get(0,2,1,1), 20f)
         Assert.assertEquals(conv2D_layer2.rotatedTransposedKernel.get(1,2,1,1), 19f)
 
+    }
+
+    @Test
+    fun testFullConvolve(){
+        val inTensor: Tensor = in_tensors.get(0)
+        val kernel: Tensor = Tensor(Shape(intArrayOf(2,2,2,2)),
+                                    IntRange(1,16).toList().map { i: Int -> i.toFloat() }.toFloatArray())
+        val outTensor:Tensor = Tensor(Shape(intArrayOf(4,4,2)))
+
+        conv2D_layer.executeFullConvolve(inTensor, kernel, outTensor)
+
+        // Filter 1
+        Assert.assertEquals(outTensor.get(0,0,0), 84f)
+        Assert.assertEquals(outTensor.get(1,0,0), 169f)
+        Assert.assertEquals(outTensor.get(2,0,0), 191f)
+        Assert.assertEquals(outTensor.get(3,0,0), 93f)
+
+        Assert.assertEquals(outTensor.get(0,1,0), 182f)
+        Assert.assertEquals(outTensor.get(1,1,0), 356f)
+        Assert.assertEquals(outTensor.get(2,1,0), 392f)
+        Assert.assertEquals(outTensor.get(3,1,0), 186f)
+
+        Assert.assertEquals(outTensor.get(0,2,0), 242f)
+        Assert.assertEquals(outTensor.get(1,2,0), 464f)
+        Assert.assertEquals(outTensor.get(2,2,0), 500f)
+        Assert.assertEquals(outTensor.get(3,2,0), 234f)
+
+        Assert.assertEquals(outTensor.get(0,3,0), 110f)
+        Assert.assertEquals(outTensor.get(1,3,0), 205f)
+        Assert.assertEquals(outTensor.get(2,3,0), 219f)
+        Assert.assertEquals(outTensor.get(3,3,0), 99f)
+
+        // Filter 2
+        Assert.assertEquals(outTensor.get(0,0,1), 172f)
+        Assert.assertEquals(outTensor.get(1,0,1), 361f)
+        Assert.assertEquals(outTensor.get(2,0,1), 415f)
+        Assert.assertEquals(outTensor.get(3,0,1), 213f)
+
+        Assert.assertEquals(outTensor.get(0,1,1), 406f)
+        Assert.assertEquals(outTensor.get(1,1,1), 836f)
+        Assert.assertEquals(outTensor.get(2,1,1), 936f)
+        Assert.assertEquals(outTensor.get(3,1,1), 474f)
+
+        Assert.assertEquals(outTensor.get(0,2,1), 562f)
+        Assert.assertEquals(outTensor.get(1,2,1), 1136f)
+        Assert.assertEquals(outTensor.get(2,2,1), 1236f)
+        Assert.assertEquals(outTensor.get(3,2,1), 618f)
+
+        Assert.assertEquals(outTensor.get(0,3,1), 294f)
+        Assert.assertEquals(outTensor.get(1,3,1), 589f)
+        Assert.assertEquals(outTensor.get(2,3,1), 635f)
+        Assert.assertEquals(outTensor.get(3,3,1), 315f)
     }
 
     /*
