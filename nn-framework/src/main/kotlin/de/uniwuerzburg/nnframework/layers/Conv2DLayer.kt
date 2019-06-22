@@ -24,6 +24,12 @@ class Conv2DLayer(private val inputShape: Shape,
     // number of filters dimensions.add(tensorB.shape.get(1)
     var kernel: Tensor = Tensor(Shape(intArrayOf(0)))  //Dummy value, will get overwritten during init()
 
+    // The rotated, transposed kernel is needed for the backward() method
+    // Actually, one Tensor that is sequentially transformed would be sufficient,
+    // but it is more clearly that always both operations are needed when splitting it into two variables
+    var transposedKernel: Tensor = Tensor(Shape(intArrayOf(0)))  //Dummy value, will get overwritten during init()
+    var rotatedTransposedKernel: Tensor = Tensor(Shape(intArrayOf(0)))  //Dummy value, will get overwritten during init()
+
     init {
         // Check validty of parameters
         if(inputShape.dimensions >3){
@@ -34,8 +40,8 @@ class Conv2DLayer(private val inputShape: Shape,
             throw IllegalArgumentException("The filter depth must match the input depth!")
         }
 
-        val calculatedOutShape = Shape(intArrayOf(inputShape.get(0) - filterShape.get(0) +1 ,
-                                                  inputShape.get(1) - filterShape.get(0) +1 ,
+        val calculatedOutShape = Shape(intArrayOf(inputShape.get(0) - filterShape.get(0) + 1 ,
+                                                  inputShape.get(1) - filterShape.get(1) + 1 ,
                                                   inputShape.get(2)))
 
         if(!outShape.equals(calculatedOutShape)){
@@ -49,9 +55,16 @@ class Conv2DLayer(private val inputShape: Shape,
         val kernel_tensor_shape = Shape(dimensions.toIntArray())
         kernel = Tensor(kernel_tensor_shape)
 
+        transposedKernel = Tensor(Shape(intArrayOf( kernel.shape.get(0), kernel.shape.get(1),
+                                                    kernel.shape.get(3), kernel.shape.get(2))))
+        rotatedTransposedKernel = Tensor(Shape(transposedKernel.shape.axis.clone()))
+
+
         // Initialize the weights
         initializeWeights(bias)
         initializeWeights(kernel)
+        transposeDepthAndAmountOfFilters(kernel, transposedKernel)
+        rotateBy180Degrees(transposedKernel, rotatedTransposedKernel)
     }
 
 
@@ -79,7 +92,11 @@ class Conv2DLayer(private val inputShape: Shape,
     /*
     * The backward pass fills in the deltas of the inTensors,
     * while having access to the deltas in outTensors as well as to the elements of the inTensors
-    * deltaX = deltaY * W^T
+    * deltaX = deltaY * rot_180 ( trans_0,1,3,2 (F)) with
+    *       deltaX: delta of the input tensor
+    *       F: kernel tensor
+    *       deltaY: delta of the output tensor
+    *       *: full convolution operator for images with a depth
     */
     override fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>) {
         /*
@@ -130,10 +147,12 @@ class Conv2DLayer(private val inputShape: Shape,
     fun setWeightsForTesting(bias:Tensor, kernel:Tensor){
         this.bias = bias
         this.kernel = kernel
+        transposeDepthAndAmountOfFilters(this.kernel, this.transposedKernel)
+        rotateBy180Degrees(this.transposedKernel, this.rotatedTransposedKernel)
     }
 
     /**
-     * This function returns the result of applying the convolution operator for images with depth
+     * This function returns the result of applying the convolution operator without padding for images with depth
      * A 2-d convolution ‘convolves’ along two spatial dimensions.
      * It has a really small kernel, essentially a window of pixel values, that slides along those two dimensions.
      * The rgb channel isn't handled as small window of depth, but obtained from beginning to end (first channel to last)
@@ -180,6 +199,46 @@ class Conv2DLayer(private val inputShape: Shape,
                     val y_i_new = inAndOutTensor.get(row, col, filter) + bias.get(filter)
                     inAndOutTensor.set(y_i_new, row, col, filter)
                 }
+            }
+        }
+    }
+
+    /**
+     * This function rotates the filters in x-y-axis by 180 degrees and returns a new, rotated kernel
+     * to the outRotatedKernel parameter
+     */
+    private fun rotateBy180Degrees(kernel: Tensor, outRotatedKernel: Tensor){
+        for (filter in 0 until kernel.shape.get(3)){
+            for (channel in 0 until kernel.shape.get(2)){
+                for(kernel_row in 0 until kernel.shape.get(0)){
+                    for(kernel_col in 0 until kernel.shape.get(1)){
+                        val current_val = kernel.get(kernel_row, kernel_col, channel, filter)
+                        val new_row = kernel.shape.get(0) - kernel_row - 1
+                        val new_col = kernel.shape.get(1) - kernel_col - 1
+                        outRotatedKernel.set(current_val, new_row, new_col, channel, filter)
+                    }
+                }
+
+            }
+        }
+    }
+
+    /**
+     * This functions transposes the depth of a filter with the amount of filters and writes the new, transposed kernel
+     * to the outTransposedKernel parameter
+     * [x,y,c,f] = x,y,f,c
+     */
+    private fun transposeDepthAndAmountOfFilters(kernel: Tensor, outTransposedKernel: Tensor){
+
+        for (filter in 0 until kernel.shape.get(3)){
+            for (channel in 0 until kernel.shape.get(2)){
+                for(kernel_row in 0 until kernel.shape.get(0)){
+                    for(kernel_col in 0 until kernel.shape.get(1)){
+                        val value = kernel.get(kernel_row, kernel_col, channel, filter)
+                        outTransposedKernel.set(value, kernel_row, kernel_col, filter, channel)
+                    }
+                }
+
             }
         }
     }
