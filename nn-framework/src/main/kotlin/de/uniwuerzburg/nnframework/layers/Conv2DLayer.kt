@@ -299,6 +299,7 @@ class Conv2DLayer(private val inputShape: Shape,
 
     /**
      * This function can be used to explicitly set the weights during testing
+     * It also re-calculates the transposed kernel as well as the rotated, transposed kernel based on the new kernel
      */
     fun setWeightsForTesting(bias:Tensor, kernel:Tensor){
         this.bias = bias
