@@ -120,39 +120,29 @@ class Conv2DLayer(private val inputShape: Shape,
     */
     override fun calculateDeltaWeights(outTensors: List<Tensor>, inTensors: List<Tensor>) {
 
+        val biasDeltas = FloatArray(bias.shape.get(0))
+
         for (i in inTensors.indices){
             val inTensor = inTensors.get(i)
             val outTensor = outTensors.get(i)
 
-            // Calculate the delta weights for the bias and add them
-
+            // Calculate the delta weights for the bias and sum them up
+            for (bias_i in 0 until bias.shape.get(0)){
+                for(row in 0 until outTensor.shape.get(0)){
+                    for (col in 0 until outTensor.shape.get(1)){
+                        biasDeltas[bias_i] += outTensor.getDelta(row, col, bias_i)
+                    }
+                }
+            }
 
             //Calculate the delta weights for the filters and sum them up
             channelwiseConvolve(inTensor = inTensor, convolvTensor = outTensor, outTensor = kernel,
                                 convolvTensor_useDeltas = true, outTensor_useDeltas = true,
                                 outTensor_sumUp = true)
         }
-        /*
-        val biasDeltas = FloatArray(bias.shape.volume)
-        for (i in inTensors.indices){
-            val inTensor = inTensors.get(i)
-            val outTensor = outTensors.get(i)
 
-            // Add the delta weights for the bias and add them
-            val currentBiasDeltas = outTensor.deltas
-            for (j in 0 until currentBiasDeltas.size){
-                biasDeltas[j] += currentBiasDeltas[j]
-            }
-
-            //Calculate the delta weight for W and add them
-            multAndTransposeFirst(inTensor, outTensor, weightmatrix,
-                    tensorA_useDeltas = false, tensorB_useDeltas = true, outTensor_useDeltas = true,
-                    outTensor_sumUp = true)
-        }
-
-        // The weight deltas are already filled but the bias deltas still net to be written
+        // The bias deltas still net to be written
         bias.setDeltas(biasDeltas)
-        */
     }
 
     /**

@@ -392,32 +392,55 @@ class Conv2D_Test {
         Assert.assertEquals(outTensor.get(1,1,2,1), 6570f, EPSILON)
     }
 
-    /*
+
     @Test
     fun testCalculateDeltaWeights(){
-        fc_layer.setWeightsForTesting(  Tensor(Shape(intArrayOf(1,3)), floatArrayOf(0.55f, 0.96f, 0.93f)),
-                Tensor(Shape(intArrayOf(2,3)), floatArrayOf(-0.71f, -0.84f,
-                        0.62f, -0.54f,
-                        -0.92f, -0.23f)))
+
+        //Without bias
+        conv2D_layer.setWeightsForTesting(  bias = Tensor(Shape(intArrayOf(2)), floatArrayOf(0f,0f)),
+                kernel = Tensor(Shape(intArrayOf(2,2,2,2)),
+                        floatArrayOf(0.74f, -0.15f, -0.55f, -0.69f,
+                                0.04f, 0.87f, 0.87f, -0.48f,
+                                -0.71f, 0.69f, -0.64f, 0.76f,
+                                0.98f, -0.97f, 0.7f, 0.26f)))
+
         // Set artificial delta values for the deltas of the out tensors
-        out_tensors.get(0).setDeltas(floatArrayOf(-0.5f, 0.33f, 1.7f))
-        out_tensors.get(1).setDeltas(floatArrayOf(-1f, 2.66f, -2.1f))
+        out_tensors.get(0).setDeltas(floatArrayOf(0.79f, -0.39f, 0.88f, 0.46f, 0.75f, -0.99f, -0.28f, 0.16f))
 
-        fc_layer.calculateDeltaWeights(out_tensors, in_tensors)
-        val bias = fc_layer.getBias
-        val weights = fc_layer.getWeights
+        conv2D_layer.calculateDeltaWeights(out_tensors, in_tensors)
+        val bias = conv2D_layer.getBias
+        val kernel = conv2D_layer.getKernel
 
-        Assert.assertEquals(bias.getDelta(0), -1.5f, EPSILON)
-        Assert.assertEquals(bias.getDelta(1), 2.99f, EPSILON)
-        Assert.assertEquals(bias.getDelta(2), -0.4f, EPSILON)
+        // Bias
+        Assert.assertEquals(bias.getDelta(0), 1.74f, EPSILON)
+        Assert.assertEquals(bias.getDelta(1), -0.36f, EPSILON)
 
-        Assert.assertEquals(weights.getDelta(0, 0), -6f, EPSILON)
-        Assert.assertEquals(weights.getDelta(0, 1), 15.96f, EPSILON)
-        Assert.assertEquals(weights.getDelta(0, 2), -12.6f, EPSILON)
-        Assert.assertEquals(weights.getDelta(1, 0), -7.5f, EPSILON)
-        Assert.assertEquals(weights.getDelta(1, 1), 18.95f, EPSILON)
-        Assert.assertEquals(weights.getDelta(1, 2), -13f, EPSILON)
+        // Filters
+
+        //Filter 1, Channel 1
+        Assert.assertEquals(kernel.getDelta(0,0,0,0), 5.83f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(1,0,0,0), 7.57f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(0,1,0,0), 11.05f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(1,1,0,0), 12.79f, EPSILON)
+
+        //Filter 1, Channel 2
+        Assert.assertEquals(kernel.getDelta(0,0,1,0), 21.49f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(1,0,1,0), 23.23f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(0,1,1,0), 26.71f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(1,1,1,0), 28.45f, EPSILON)
+
+        //Filter 2, Channel 1
+        Assert.assertEquals(kernel.getDelta(0,0,0,1), -1.55f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(1,0,0,1), -1.91f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(0,1,0,1), -2.63f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(1,1,0,1), -2.99f, EPSILON)
+
+        //Filter 1, Channel 1
+        Assert.assertEquals(kernel.getDelta(0,0,1,1), -4.79f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(1,0,1,1), -5.15f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(0,1,1,1), -5.87f, EPSILON)
+        Assert.assertEquals(kernel.getDelta(1,1,1,1), -6.23f, EPSILON)
     }
-    */
+
 
 }
