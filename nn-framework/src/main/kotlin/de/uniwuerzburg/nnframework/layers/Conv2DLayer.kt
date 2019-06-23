@@ -127,9 +127,10 @@ class Conv2DLayer(private val inputShape: Shape,
             // Calculate the delta weights for the bias and add them
 
 
-            //Calculate the delta weights for the filters //TODO and add them
-            channelwiseConvolve(inTensor = inTensor, kernel = outTensor, outTensor = kernel,
-                                outTensor_useDeltas = true)
+            //Calculate the delta weights for the filters and sum them up
+            channelwiseConvolve(inTensor = inTensor, convolvTensor = outTensor, outTensor = kernel,
+                                convolvTensor_useDeltas = true, outTensor_useDeltas = true,
+                                outTensor_sumUp = true)
         }
         /*
         val biasDeltas = FloatArray(bias.shape.volume)
@@ -313,39 +314,31 @@ class Conv2DLayer(private val inputShape: Shape,
      * This function writes the result of applying the channelwise convolution operator without padding
      * for images with depth to the elements or the deltas of the outTensor
      * (depending on the outTensor_useDeltas parameter)
+     * outTensor = inTensor *ch convolvTensor
      */
-    private fun channelwiseConvolve(inTensor: Tensor, kernel: Tensor, outTensor: Tensor,
-                                    outTensor_useDeltas: Boolean = false){
-        val filterHeight = kernel.shape.get(0)
-        val filterWidth = kernel.shape.get(1)
+    fun channelwiseConvolve(inTensor: Tensor, convolvTensor: Tensor, outTensor: Tensor,
+                                    convolvTensor_useDeltas: Boolean = false, outTensor_useDeltas: Boolean = false,
+                                    outTensor_sumUp: Boolean = false){
 
-        // Iterate through the number of filters
-        for (filter in 0 until kernel.shape.get(3)){
+        // Iterate through each filter of the outTensor
+        for (filter in 0 until outTensor.shape.get(3)){
             // Iterate through the numbers of channels of the filter
-            for (channel in 0 until kernel.shape.get(2)){
-
-                simpleConvolveWithFixedChannels(inTensor = inTensor, kernel = kernel, outTensor = outTensor,
-                        filter = filter, inTensor_channel = channel, kernel_channel = filter,
-                        kernel_useDeltas = true, outTensor_useDeltas = true)
+            for (channel in 0 until outTensor.shape.get(2)){
                 /*
-                // Iterate through the different filter entries in the current channel
-                for(filter_row in 0 until filterHeight){
-                    for (filter_col in 0 until filterWidth){
-                        var deltaWeight = 0f
-                        //TODO form, for
+                Example:
+                Filter 1, Channel 1 => x[Channel 1] * delta_y[Channel 1]
+                Filter 1, Channel 2 => x[Channel 2] * delta_y[Channel 1]
+                Filter 1, Channel 3 => x[Channel 3] * delta_y[Channel 1]
 
-                        // Write result of filter application to the outTensor
-                        if (outTensor_useDeltas) {
-                            outTensor.setDelta(deltaWeight, filter_row, filter_col, channel, filter)
-                        } else {
-                            outTensor.set(deltaWeight, filter_row, filter_col, channel, filter)
-                        }
-
-
-
-
-                }
-                }*/
+                In General:
+                Filter a, Channel b => x[Channel b] * delta_y[channel a]
+                *
+                 */
+                simpleConvolveWithFixedChannels(inTensor = inTensor, convolvTensor = convolvTensor, outTensor = outTensor,
+                        inTensor_channel = channel, convolvTensor_channel = filter,
+                        outTensor_filter = filter, outTensor_channel = channel,
+                        convolvTensor_useDeltas = convolvTensor_useDeltas, outTensor_useDeltas = outTensor_useDeltas,
+                        outTensor_sumUp = outTensor_sumUp)
             }
         }
 
@@ -353,40 +346,53 @@ class Conv2DLayer(private val inputShape: Shape,
 
     /**
      * This function writes the result of applying the convolution operator without padding and only for the specified
-     * channel of the image and the filter with depth to the elements or the deltas of the outTensor
+     * channel of the image and the filter with depth to the elements or the deltas of the specified outTensor channel
      * (depending on the outTensor_useDeltas parameter)
      */
-    private fun simpleConvolveWithFixedChannels(inTensor: Tensor, kernel: Tensor, outTensor: Tensor,
-                                                filter: Int, inTensor_channel: Int, kernel_channel: Int,
-                                                kernel_useDeltas: Boolean = false, outTensor_useDeltas: Boolean = false){
+    fun simpleConvolveWithFixedChannels(inTensor: Tensor, convolvTensor: Tensor, outTensor: Tensor,
+                                    inTensor_channel: Int, convolvTensor_channel: Int,
+                                    outTensor_filter: Int, outTensor_channel: Int,
+                                    convolvTensor_useDeltas: Boolean = false, outTensor_useDeltas: Boolean = false,
+                                    outTensor_sumUp: Boolean = false){
 
         val inputHeight = inTensor.shape.get(0)
         val inputWidth = inTensor.shape.get(1)
-        val filterHeight = kernel.shape.get(0)
-        val filterWidth = kernel.shape.get(1)
+        val convolvTensorHeight = convolvTensor.shape.get(0)
+        val convolvTensorWidth = convolvTensor.shape.get(1)
 
         // Iterate through all possible positions of the filter
-        for (input_row in 0 until inputHeight-filterHeight+1){
-            for(input_col in 0 until inputWidth-filterWidth+1){
+        for (input_row in 0 until inputHeight-convolvTensorHeight+1){
+            for(input_col in 0 until inputWidth-convolvTensorWidth+1){
                 //Apply the filter for each element in x and y (there is no depth anymore!)
                 var y_i = 0f
-                for(filter_row in 0 until filterHeight){
-                    for (filter_col in 0 until filterWidth){
-                        if(kernel_useDeltas){
+                for(filter_row in 0 until convolvTensorHeight){
+                    for (filter_col in 0 until convolvTensorWidth){
+                        if(convolvTensor_useDeltas){
                             y_i += inTensor.get(input_row + filter_row, input_col+filter_col, inTensor_channel) *
-                                    kernel.getDelta(filter_row, filter_col, kernel_channel, filter)
+                                    convolvTensor.getDelta(filter_row, filter_col, convolvTensor_channel)
                         }else{
                             y_i += inTensor.get(input_row + filter_row, input_col+filter_col, inTensor_channel) *
-                                    kernel.get(filter_row, filter_col, kernel_channel, filter)
+                                    convolvTensor.get(filter_row, filter_col, convolvTensor_channel)
                         }
 
                     }
                 }
                 // Write result to the outTensor
                 if(outTensor_useDeltas){
-                    outTensor.setDelta(y_i, input_row, input_col, filter)
+                    if(!outTensor_sumUp){
+                        outTensor.setDelta(y_i, input_row, input_col, outTensor_channel, outTensor_filter)
+                    }else{
+                        val oldVal = outTensor.getDelta(input_row, input_col, outTensor_channel, outTensor_filter)
+                        outTensor.setDelta(oldVal + y_i, input_row, input_col, outTensor_channel, outTensor_filter)
+                    }
+
                 }else{
-                    outTensor.set(y_i, input_row, input_col, filter)
+                    if(!outTensor_sumUp){
+                        outTensor.set(y_i, input_row, input_col, outTensor_channel, outTensor_filter)
+                    }else{
+                        val oldVal = outTensor.get(input_row, input_col, outTensor_channel, outTensor_filter)
+                        outTensor.set(oldVal + y_i, input_row, input_col, outTensor_channel, outTensor_filter)
+                    }
                 }
             }
         }

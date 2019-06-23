@@ -219,8 +219,6 @@ class Conv2D_Test {
         Assert.assertEquals(outTensor.get(3,3,1), 315f)
     }
 
-
-
     @Test
     fun testBackward() {
         conv2D_layer.setWeightsForTesting(  bias = Tensor(Shape(intArrayOf(2)), floatArrayOf(0f,0f)),
@@ -277,6 +275,121 @@ class Conv2D_Test {
         Assert.assertEquals(in_tensor.deltas[17], -0.1792f, EPSILON)
 
 
+    }
+
+    @Test
+    fun testSimpleConvolveWithFixedChannels(){
+        val inTensor = Tensor(Shape(intArrayOf(3,4,2)),
+                        IntRange(1,24).toList().map { i: Int -> i.toFloat() }.toFloatArray())
+
+        val filter = Tensor(Shape(intArrayOf(2,2,2)),
+                        IntRange(1,8).toList().map { i: Int -> i.toFloat() }.toFloatArray())
+
+        val outTensor = Tensor(Shape(intArrayOf(2,3,2,2)))
+
+
+        conv2D_layer.simpleConvolveWithFixedChannels(inTensor = inTensor, convolvTensor = filter, outTensor = outTensor,
+                inTensor_channel = 0, convolvTensor_channel = 0,
+                outTensor_filter = 0, outTensor_channel = 0,
+                convolvTensor_useDeltas = false, outTensor_useDeltas = false,
+                outTensor_sumUp = false)
+
+        conv2D_layer.simpleConvolveWithFixedChannels(inTensor = inTensor, convolvTensor = filter, outTensor = outTensor,
+                inTensor_channel = 0, convolvTensor_channel = 1,
+                outTensor_filter = 0, outTensor_channel = 1,
+                convolvTensor_useDeltas = false, outTensor_useDeltas = false,
+                outTensor_sumUp = false)
+
+        conv2D_layer.simpleConvolveWithFixedChannels(inTensor = inTensor, convolvTensor = filter, outTensor = outTensor,
+                inTensor_channel = 1, convolvTensor_channel = 0,
+                outTensor_filter = 1, outTensor_channel = 0,
+                convolvTensor_useDeltas = false, outTensor_useDeltas = true,
+                outTensor_sumUp = false)
+
+        conv2D_layer.simpleConvolveWithFixedChannels(inTensor = inTensor, convolvTensor = filter, outTensor = outTensor,
+                inTensor_channel = 1, convolvTensor_channel = 1,
+                outTensor_filter = 1, outTensor_channel = 1,
+                convolvTensor_useDeltas = false, outTensor_useDeltas = true,
+                outTensor_sumUp = false)
+
+        // Input Channel 0, Filter Channel 0
+        Assert.assertEquals(outTensor.get(0,0,0,0), 37f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,0,0,0), 47f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,1,0,0), 67f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,1,0,0), 77f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,2,0,0), 97f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,2,0,0), 107f, EPSILON)
+
+        // Input Channel 0, Filter Channel 1
+        Assert.assertEquals(outTensor.get(0,0,1,0), 85f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,0,1,0), 111f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,1,1,0), 163f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,1,1,0), 189f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,2,1,0), 241f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,2,1,0), 267f, EPSILON)
+
+        // Input Channel 1, Filter Channel 0
+        Assert.assertEquals(outTensor.getDelta(0,0,0,1), 157f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(1,0,0,1), 167f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(0,1,0,1), 187f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(1,1,0,1), 197f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(0,2,0,1), 217f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(1,2,0,1), 227f, EPSILON)
+
+        // Input Channel 1, Filter Channel 1
+        Assert.assertEquals(outTensor.getDelta(0,0,1,1), 397f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(1,0,1,1), 423f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(0,1,1,1), 475f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(1,1,1,1), 501f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(0,2,1,1), 553f, EPSILON)
+        Assert.assertEquals(outTensor.getDelta(1,2,1,1), 579f, EPSILON)
+    }
+
+    @Test
+    fun testChannelwiseConvolve(){
+        val inTensor = Tensor(Shape(intArrayOf(3,3,3)),
+                IntRange(1,27).toList().map { i: Int -> i.toFloat() }.toFloatArray())
+
+        val y = Tensor(Shape(intArrayOf(2,2,2)),
+                floatArrayOf(10f,20f,30f,40f,50f,60f,70f,80f))
+
+        val outTensor = Tensor(Shape(intArrayOf(2,2,3,2)))
+
+        conv2D_layer.channelwiseConvolve(inTensor = inTensor, convolvTensor = y, outTensor = outTensor)
+
+        //Filter 0
+        //Channel 0
+        Assert.assertEquals(outTensor.get(0,0,0,0), 370f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,0,0,0), 470f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,1,0,0), 670f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,1,0,0), 770f, EPSILON)
+        //Channel 1
+        Assert.assertEquals(outTensor.get(0,0,1,0), 1270f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,0,1,0), 1370f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,1,1,0), 1570f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,1,1,0), 1670f, EPSILON)
+        //Channel 2
+        Assert.assertEquals(outTensor.get(0,0,2,0), 2170f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,0,2,0), 2270f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,1,2,0), 2470f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,1,2,0), 2570f, EPSILON)
+
+        //Filter 1
+        //Channel 0
+        Assert.assertEquals(outTensor.get(0,0,0,1), 850f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,0,0,1), 1110f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,1,0,1), 1630f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,1,0,1), 1890f, EPSILON)
+        //Channel 1
+        Assert.assertEquals(outTensor.get(0,0,1,1), 3190f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,0,1,1), 3450f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,1,1,1), 3970f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,1,1,1), 4230f, EPSILON)
+        //Channel 2
+        Assert.assertEquals(outTensor.get(0,0,2,1), 5530f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,0,2,1), 5790f, EPSILON)
+        Assert.assertEquals(outTensor.get(0,1,2,1), 6310f, EPSILON)
+        Assert.assertEquals(outTensor.get(1,1,2,1), 6570f, EPSILON)
     }
 
     /*
