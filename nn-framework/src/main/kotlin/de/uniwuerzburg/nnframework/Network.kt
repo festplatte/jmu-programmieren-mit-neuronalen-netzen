@@ -19,26 +19,11 @@ class Network<T>(private val input: InputLayer<T>,
     private val dataMap = LinkedHashMap<Layer, List<Tensor>>()
 
 
-    fun updateWeights(updateMechanism: SGDFlavor, learningRate: Float) {
-        // TODO could be optimized: pass in the updateMechanism as a function which is passed to every layer which then updates its own weights
-        if (updateMechanism == SGDFlavor.STOCHASTIC_GRADIENT_DESCENT) {
-            for (layer in layers) {
-                // TODO implement updates for all weight layers
-                if (layer is FullyConnectedLayer) {
-                    //Update Bias
-                    for (i in layer.bias.deltas.indices) {
-                        layer.bias.elements[i] -= learningRate * layer.bias.deltas[i]
-                        layer.bias.deltas[i] = 0f
-                    }
-                    //Update weightmatrix
-                    for (i in layer.weightmatrix.deltas.indices) {
-                        layer.weightmatrix.elements[i] -= learningRate * layer.weightmatrix.deltas[i]
-                        layer.weightmatrix.deltas[i] = 0f
-                    }
-                }
+    fun updateWeights(updater: (value: Float, delta: Float) -> Float) {
+        for (layer in layers) {
+            if (layer is WeightLayer) {
+                layer.updateWeights(updater)
             }
-        } else if (updateMechanism == SGDFlavor.ADAM) {
-            // TODO implement adam optimizer
         }
     }
 

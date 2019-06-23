@@ -37,7 +37,13 @@ class SGDTrainer(private val batchSize: Int = 1,
                 val loss = lossFkt.calculate(forwardOutput, batchLabels)
                 lossFkt.differentiate(forwardOutput, batchLabels)
                 network.backprop(forwardOutput)
-                network.updateWeights(updateMechanism, learningRate)
+
+                if (updateMechanism == SGDFlavor.STOCHASTIC_GRADIENT_DESCENT) {
+                    network.updateWeights { value, delta -> value - learningRate * delta }
+                }
+                if (updateMechanism == SGDFlavor.ADAM) {
+                    // TODO implement
+                }
 
                 time = System.currentTimeMillis() - time
                 println("Epoch: $epoch - Data: $processedData/${dataList.size} - Loss: $loss - Accuracy: $accuracy - Time: ${time}ms")

@@ -100,6 +100,17 @@ class FullyConnectedLayer(private val inShape: Shape,
         bias.deltas = biasDeltas
     }
 
+    override fun updateWeights(updater: (value: Float, delta: Float) -> Float) {
+        for (i in bias.deltas.indices) {
+            bias.elements[i] = updater(bias.elements[i], bias.deltas[i])
+            bias.deltas[i] = 0f
+        }
+        for (i in weightmatrix.deltas.indices) {
+            weightmatrix.elements[i] = updater(weightmatrix.elements[i], weightmatrix.deltas[i])
+            weightmatrix.deltas[i] = 0f
+        }
+    }
+
     /**
      * This function can be used to explicitly set the weights during testing
      */

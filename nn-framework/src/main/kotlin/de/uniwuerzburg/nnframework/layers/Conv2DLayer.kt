@@ -144,6 +144,10 @@ class Conv2DLayer(private val inputShape: Shape,
         bias.deltas = biasDeltas
     }
 
+    override fun updateWeights(updater: (value: Float, delta: Float) -> Float) {
+        // TODO("not implemented") To change body of created functions use File | Settings | File Templates.
+    }
+
     /**
      * This function writes the result of applying the convolution operator without padding for images with depth
      * to the elements of the outTensor
