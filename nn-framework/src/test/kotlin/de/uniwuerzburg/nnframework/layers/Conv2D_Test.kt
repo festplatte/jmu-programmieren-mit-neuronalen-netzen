@@ -2,6 +2,7 @@ package de.uniwuerzburg.nnframework.layers
 
 import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
+import de.uniwuerzburg.nnframework.data.printTensor
 import org.testng.Assert
 import org.testng.annotations.Test
 
@@ -169,9 +170,9 @@ class Conv2D_Test {
     @Test
     fun testFullConvolve(){
         val inTensor: Tensor = in_tensors.get(0)
-        val kernel: Tensor = Tensor(Shape(intArrayOf(2,2,2,2)),
+        val kernel = Tensor(Shape(intArrayOf(2,2,2,2)),
                                     IntRange(1,16).toList().map { i: Int -> i.toFloat() }.toFloatArray())
-        val outTensor:Tensor = Tensor(Shape(intArrayOf(4,4,2)))
+        val outTensor = Tensor(Shape(intArrayOf(4,4,2)))
 
         conv2D_layer.executeFullConvolve(inTensor, kernel, outTensor)
 
@@ -218,31 +219,67 @@ class Conv2D_Test {
         Assert.assertEquals(outTensor.get(3,3,1), 315f)
     }
 
-    /*
+
 
     @Test
     fun testBackward() {
-        fc_layer.setWeightsForTesting(  Tensor(Shape(intArrayOf(1,3)), floatArrayOf(0.55f, 0.96f, 0.93f)),
-                Tensor(Shape(intArrayOf(2,3)), floatArrayOf(-0.71f, -0.84f,
-                        0.62f, -0.54f,
-                        -0.92f, -0.23f)))
+        conv2D_layer.setWeightsForTesting(  bias = Tensor(Shape(intArrayOf(2)), floatArrayOf(0f,0f)),
+                kernel = Tensor(Shape(intArrayOf(2,2,2,2)),
+                        floatArrayOf(0.74f, -0.15f, -0.55f, -0.69f,
+                                0.04f, 0.87f, 0.87f, -0.48f,
+                                -0.71f, 0.69f, -0.64f, 0.76f,
+                                0.98f, -0.97f, 0.7f, 0.26f)))
+
         // Set artificial delta values for the deltas of the out tensors
-        out_tensors.get(0).setDeltas(floatArrayOf(-0.5f, 0.33f, 1.7f))
-        out_tensors.get(1).setDeltas(floatArrayOf(-1f, 2.66f, -2.1f))
+        out_tensors.get(0).setDeltas(floatArrayOf(0.79f, -0.39f, 0.88f, 0.46f, 0.75f, -0.99f, -0.28f, 0.16f))
 
+        conv2D_layer.backward(out_tensors, in_tensors)
+        val in_tensor = in_tensors.get(0)
 
-        fc_layer.backward(out_tensors, in_tensors)
-        val in_tensor1 = in_tensors.get(0)
-        val in_tensor2 = in_tensors.get(1)
+        /**
+         * Expected results:
+         *
+         * Channel 1:
+         * [[ 0.0521 -0.0645 -0.3048]
+         * [ 0.8133  0.7746 -1.1754]
+         * [-0.6246 -0.4419 -0.1958]]
+         *
+         * Channel 2:
+         * [[ 0.7666  0.9731  0.5696]
+         * [-1.026   -0.0041  0.017 ]
+         * [ 0.621    0.1748 -0.1792]]
+         */
 
-        Assert.assertEquals(in_tensor1.deltas[0], -1.0044f, EPSILON)
-        Assert.assertEquals(in_tensor1.deltas[1], -0.1492f, EPSILON)
+        //Channel 1
+        Assert.assertEquals(in_tensor.deltas[0], 0.0521f, EPSILON)       //Delta x_0
+        Assert.assertEquals(in_tensor.deltas[1], 0.8133f, EPSILON)
+        Assert.assertEquals(in_tensor.deltas[2], -0.6246f, EPSILON)
 
-        Assert.assertEquals(in_tensor2.deltas[0], 4.2912f, EPSILON)
-        Assert.assertEquals(in_tensor2.deltas[1], -0.1134f, EPSILON)
+        Assert.assertEquals(in_tensor.deltas[3], -0.0645f, EPSILON)       //Delta x_3
+        Assert.assertEquals(in_tensor.deltas[4], 0.7746f, EPSILON)
+        Assert.assertEquals(in_tensor.deltas[5], -0.4419f, EPSILON)
+
+        Assert.assertEquals(in_tensor.deltas[6], -0.3048f, EPSILON)       //Delta x_6
+        Assert.assertEquals(in_tensor.deltas[7], -1.1754f, EPSILON)
+        Assert.assertEquals(in_tensor.deltas[8], -0.1958f, EPSILON)
+
+        //Channel 2
+        Assert.assertEquals(in_tensor.deltas[9], 0.7666f, EPSILON)       //Delta x_9
+        Assert.assertEquals(in_tensor.deltas[10], -1.026f, EPSILON)
+        Assert.assertEquals(in_tensor.deltas[11], 0.621f, EPSILON)
+
+        Assert.assertEquals(in_tensor.deltas[12], 0.9731f, EPSILON)      //Delta x_12
+        Assert.assertEquals(in_tensor.deltas[13], -0.0041f, EPSILON)
+        Assert.assertEquals(in_tensor.deltas[14], 0.1748f, EPSILON)
+
+        Assert.assertEquals(in_tensor.deltas[15], 0.5696f, EPSILON)      //Delta x_15
+        Assert.assertEquals(in_tensor.deltas[16], 0.017f, EPSILON)
+        Assert.assertEquals(in_tensor.deltas[17], -0.1792f, EPSILON)
+
 
     }
 
+    /*
     @Test
     fun testCalculateDeltaWeights(){
         fc_layer.setWeightsForTesting(  Tensor(Shape(intArrayOf(1,3)), floatArrayOf(0.55f, 0.96f, 0.93f)),

@@ -97,7 +97,7 @@ class Conv2DLayer(private val inputShape: Shape,
     *       *: full convolution operator for images with a depth
     */
     override fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>) {
-        //Prepare the filter for rhe backward pass
+        //Prepare the filter for the backward pass
         transposeDepthAndAmountOfFilters(kernel, transposedKernel)
         rotateBy180Degrees(transposedKernel, rotatedTransposedKernel)
 
