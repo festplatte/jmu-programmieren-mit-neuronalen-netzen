@@ -442,5 +442,4 @@ class Conv2D_Test {
         Assert.assertEquals(kernel.getDelta(1,1,1,1), -6.23f, EPSILON)
     }
 
-
 }

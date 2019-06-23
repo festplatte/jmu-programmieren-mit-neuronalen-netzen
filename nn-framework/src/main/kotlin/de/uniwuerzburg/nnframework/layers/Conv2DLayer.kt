@@ -113,8 +113,8 @@ class Conv2DLayer(private val inputShape: Shape,
     /*
     * The calculateDeltaWeights function calculates the delta weights by
     * using the elements of the inTensors and the deltas of the outTensors
-    * DeltaBias = DeltaY
-    * DeltaW = X^T * DeltaY
+    * DeltaBias = Sum of all elements of DeltaY of the according channel
+    * DeltaFilter = X *ch DeltaY        (*ch: channel-wise convolution)
     *
     * If the list contains more than one element, the update values are summed up
     */
