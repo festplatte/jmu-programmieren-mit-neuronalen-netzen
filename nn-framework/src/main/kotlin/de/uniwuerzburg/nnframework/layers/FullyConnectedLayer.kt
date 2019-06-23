@@ -76,7 +76,7 @@ class FullyConnectedLayer(private val inShape: Shape,
     * DeltaBias = DeltaY
     * DeltaW = X^T * DeltaY
     *
-    * If the list contains more than one element, the update values are summed up and averaged at the end
+    * If the list contains more than one element, the update values are summed up
     */
     override fun calculateDeltaWeights(outTensors: List<Tensor>, inTensors: List<Tensor>) {
         val biasDeltas = FloatArray(bias.shape.volume)
@@ -84,13 +84,13 @@ class FullyConnectedLayer(private val inShape: Shape,
             val inTensor = inTensors.get(i)
             val outTensor = outTensors.get(i)
 
-            // Add the delta weights for the bias and add them
+            // Calculate the delta weights for the bias and add them
             val currentBiasDeltas = outTensor.deltas
             for (j in 0 until currentBiasDeltas.size){
                 biasDeltas[j] += currentBiasDeltas[j]
             }
 
-            //Calculate the delta weight for W and add them
+            //Calculate the delta weights for W and add them
             multAndTransposeFirst(inTensor, outTensor, weightmatrix,
                     tensorA_useDeltas = false, tensorB_useDeltas = true, outTensor_useDeltas = true,
                     outTensor_sumUp = true)
