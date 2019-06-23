@@ -21,7 +21,7 @@ class SGDTrainer(private val batchSize: Int = 1,
         var dataList = data.keys.toList()
         if (shuffle) dataList = dataList.shuffled()
 
-        for (epoch in 0..amountEpochs) {
+        for (epoch in 1..amountEpochs) {
             println("Start epoch $epoch/$amountEpochs")
 
             var batchOffset = 0
@@ -31,8 +31,8 @@ class SGDTrainer(private val batchSize: Int = 1,
                 val batchLabels = batchData.map { data[it] ?: throw IllegalArgumentException("no label for data") }
 
                 val forwardOutput = network.forward(batchData)
-                val loss = lossFkt.calculate(forwardOutput, batchLabels)
                 val accuracy = calcAccuracy(forwardOutput, batchLabels)
+                val loss = lossFkt.calculate(forwardOutput, batchLabels)
                 lossFkt.differentiate(forwardOutput, batchLabels)
                 network.backprop(forwardOutput)
                 network.updateWeights(updateMechanism, learningRate)

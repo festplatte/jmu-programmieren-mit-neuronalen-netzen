@@ -42,7 +42,7 @@ class Conv2DLayer(private val inputShape: Shape,
 
         val calculatedOutShape = Shape(intArrayOf(inputShape.get(0) - filterShape.get(0) + 1 ,
                                                   inputShape.get(1) - filterShape.get(1) + 1 ,
-                                                  inputShape.get(2)))
+                                                  numOfFilters))
 
         if(!outShape.equals(calculatedOutShape)){
             throw IllegalArgumentException("The output shape must match the input shape and the filter shape!")
