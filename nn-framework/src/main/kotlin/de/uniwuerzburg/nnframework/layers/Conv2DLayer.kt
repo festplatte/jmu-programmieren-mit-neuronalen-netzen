@@ -145,7 +145,14 @@ class Conv2DLayer(private val inputShape: Shape,
     }
 
     override fun updateWeights(updater: (value: Float, delta: Float) -> Float) {
-        // TODO("not implemented") To change body of created functions use File | Settings | File Templates.
+        for (i in bias.deltas.indices) {
+            bias.elements[i] = updater(bias.elements[i], bias.deltas[i])
+            bias.deltas[i] = 0f
+        }
+        for (i in kernel.deltas.indices) {
+            kernel.elements[i] = updater(kernel.elements[i], kernel.deltas[i])
+            kernel.deltas[i] = 0f
+        }
     }
 
     /**
