@@ -58,7 +58,7 @@ class TensorUtilsTest {
     fun testMultWithTransposeFirstAndSumUp() {
         // (2x1)^T*(2x3)
         val result = Tensor(Shape(intArrayOf(1,3)), FloatArray(3))
-        result.setDeltas(createFloatArray(0..2))
+        result.deltas = createFloatArray(0..2)
         multAndTransposeFirst(col_vector_transposition, matrix__tranposition, result,
                 tensorA_useDeltas = false, tensorB_useDeltas = false, outTensor_useDeltas = true, outTensor_sumUp = true)
 

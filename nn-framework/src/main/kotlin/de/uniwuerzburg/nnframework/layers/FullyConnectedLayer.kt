@@ -97,7 +97,7 @@ class FullyConnectedLayer(private val inShape: Shape,
         }
 
         // The weight deltas are already filled but the bias deltas still net to be written
-        bias.setDeltas(biasDeltas)
+        bias.deltas = biasDeltas
     }
 
     /**

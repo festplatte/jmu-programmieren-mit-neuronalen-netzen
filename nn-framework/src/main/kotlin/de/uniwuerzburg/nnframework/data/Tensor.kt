@@ -5,7 +5,18 @@ package de.uniwuerzburg.nnframework.data
  * Somit können Vektoren, Matrizen und mehrdimensionale Datenformen abgebildet werden.
  */
 class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volume)) {
-    val deltas: FloatArray by lazy { FloatArray(shape.volume) }
+    private var _deltas: FloatArray? = null
+    var deltas: FloatArray
+        get() {
+            if (_deltas == null) {
+                _deltas = FloatArray(shape.volume)
+            }
+            return _deltas ?: throw Exception("someone screwed up the deltas!")
+        }
+        set(value) {
+            _deltas = value
+        }
+
 
     init {
         if (elements.size != shape.volume) {
@@ -29,7 +40,7 @@ class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volum
         for (i in indices.indices) {
             var curIndex = indices[i]
             if (i != 0) {
-                for (j in 0..i-1) {
+                for (j in 0..i - 1) {
                     curIndex *= shape.get(j)
                 }
             }
@@ -70,17 +81,5 @@ class Tensor(val shape: Shape, var elements: FloatArray = FloatArray(shape.volum
      */
     fun setDelta(value: Float, vararg indices: Int) {
         deltas[calcIndex(indices)] = value
-    }
-
-    /**
-     * Die Funktion kann genutzt werden, um die Deltas des Tensors zu setzen
-     */
-    fun setDeltas(deltas: FloatArray){
-        if(deltas.size != this.deltas.size){
-            throw IllegalArgumentException("The delta array size does have the right size")
-        }
-        for (i in 0 until deltas.size){
-            this.deltas[i] = deltas[i]
-        }
     }
 }

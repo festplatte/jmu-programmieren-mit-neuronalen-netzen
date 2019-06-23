@@ -229,7 +229,7 @@ class Conv2D_Test {
                                 0.98f, -0.97f, 0.7f, 0.26f)))
 
         // Set artificial delta values for the deltas of the out tensors
-        out_tensors.get(0).setDeltas(floatArrayOf(0.79f, -0.39f, 0.88f, 0.46f, 0.75f, -0.99f, -0.28f, 0.16f))
+        out_tensors.get(0).deltas = floatArrayOf(0.79f, -0.39f, 0.88f, 0.46f, 0.75f, -0.99f, -0.28f, 0.16f)
 
         conv2D_layer.backward(out_tensors, in_tensors)
         val in_tensor = in_tensors.get(0)
@@ -405,7 +405,7 @@ class Conv2D_Test {
                                 0.98f, -0.97f, 0.7f, 0.26f)))
 
         // Set artificial delta values for the deltas of the out tensors
-        out_tensors.get(0).setDeltas(floatArrayOf(0.79f, -0.39f, 0.88f, 0.46f, 0.75f, -0.99f, -0.28f, 0.16f))
+        out_tensors.get(0).deltas = floatArrayOf(0.79f, -0.39f, 0.88f, 0.46f, 0.75f, -0.99f, -0.28f, 0.16f)
 
         conv2D_layer.calculateDeltaWeights(out_tensors, in_tensors)
         val bias = conv2D_layer.getBias

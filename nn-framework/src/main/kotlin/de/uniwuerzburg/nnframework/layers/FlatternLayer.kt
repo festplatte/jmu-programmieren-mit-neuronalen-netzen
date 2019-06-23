@@ -9,13 +9,13 @@ import de.uniwuerzburg.nnframework.data.Tensor
 class FlatternLayer(override val outputShape: Shape) : ActivationLayer {
     override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
         inTensors.forEachIndexed { index, tensor ->
-            System.arraycopy(tensor.elements, 0, outTensors[index].elements, 0, tensor.elements.size)
+            outTensors[index].elements = tensor.elements
         }
     }
 
     override fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>) {
         outTensors.forEachIndexed { index, tensor ->
-            System.arraycopy(tensor.elements, 0, inTensors[index].elements, 0, tensor.elements.size)
+            inTensors[index].deltas = tensor.deltas
         }
     }
 }

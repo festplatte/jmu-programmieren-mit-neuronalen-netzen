@@ -4,6 +4,7 @@ import de.uniwuerzburg.nnframework.data.Shape
 import de.uniwuerzburg.nnframework.data.Tensor
 import de.uniwuerzburg.nnframework.layers.*
 import de.uniwuerzburg.nnframework.loss.CrossEntropyLoss
+import de.uniwuerzburg.nnframework.loss.MeanSquaredLoss
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -13,9 +14,9 @@ fun main(args: Array<String>) {
     val mnistTest = readFiles("/Users/michaelgabler/Repositories/jmu-machine-learning-for-nlp/exercise-3/MNIST PyTorch/data/test")
 
     val cnNetwork = Network(ImageStringInputLayer(), listOf(
-            Conv2DLayer(Shape(intArrayOf(28, 28, 1)), Shape(intArrayOf(27, 27, 32)), Shape(intArrayOf(2, 2, 1)), 32),
-            FlatternLayer(Shape(intArrayOf(1, 23328))),
-            FullyConnectedLayer(Shape(intArrayOf(1, 23328)), Shape(intArrayOf(1, 10))),
+            Conv2DLayer(Shape(intArrayOf(28, 28, 1)), Shape(intArrayOf(27, 27, 4)), Shape(intArrayOf(2, 2, 1)), 4),
+            FlatternLayer(Shape(intArrayOf(1, 2916))),
+            FullyConnectedLayer(Shape(intArrayOf(1, 2916)), Shape(intArrayOf(1, 10))),
             SoftmaxLayer(Shape(intArrayOf(1, 10)))
     ))
     val fcNetwork = Network(ImageStringInputLayer(), listOf(

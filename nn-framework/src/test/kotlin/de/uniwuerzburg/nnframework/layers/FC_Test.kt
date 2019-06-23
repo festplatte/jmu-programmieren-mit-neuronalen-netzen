@@ -47,8 +47,8 @@ class FC_Test {
                         0.62f, -0.54f,
                         -0.92f, -0.23f)))
         // Set artificial delta values for the deltas of the out tensors
-        out_tensors.get(0).setDeltas(floatArrayOf(-0.5f, 0.33f, 1.7f))
-        out_tensors.get(1).setDeltas(floatArrayOf(-1f, 2.66f, -2.1f))
+        out_tensors.get(0).deltas = floatArrayOf(-0.5f, 0.33f, 1.7f)
+        out_tensors.get(1).deltas = floatArrayOf(-1f, 2.66f, -2.1f)
 
 
         fc_layer.backward(out_tensors, in_tensors)
@@ -70,8 +70,8 @@ class FC_Test {
                         0.62f, -0.54f,
                         -0.92f, -0.23f)))
         // Set artificial delta values for the deltas of the out tensors
-        out_tensors.get(0).setDeltas(floatArrayOf(-0.5f, 0.33f, 1.7f))
-        out_tensors.get(1).setDeltas(floatArrayOf(-1f, 2.66f, -2.1f))
+        out_tensors.get(0).deltas = floatArrayOf(-0.5f, 0.33f, 1.7f)
+        out_tensors.get(1).deltas = floatArrayOf(-1f, 2.66f, -2.1f)
 
         fc_layer.calculateDeltaWeights(out_tensors, in_tensors)
         val bias = fc_layer.getBias

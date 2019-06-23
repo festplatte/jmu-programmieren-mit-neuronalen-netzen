@@ -26,6 +26,8 @@ class SGDTrainer(private val batchSize: Int = 1,
 
             var batchOffset = 0
             while (batchOffset < dataList.size) {
+                var time = System.currentTimeMillis()
+
                 val processedData = if (batchOffset + batchSize > dataList.size) dataList.size else batchOffset + batchSize
                 val batchData = dataList.subList(batchOffset, processedData)
                 val batchLabels = batchData.map { data[it] ?: throw IllegalArgumentException("no label for data") }
@@ -37,7 +39,8 @@ class SGDTrainer(private val batchSize: Int = 1,
                 network.backprop(forwardOutput)
                 network.updateWeights(updateMechanism, learningRate)
 
-                println("Epoch: $epoch - Data: $processedData/${dataList.size} - Loss: $loss - Accuracy: $accuracy")
+                time = System.currentTimeMillis() - time
+                println("Epoch: $epoch - Data: $processedData/${dataList.size} - Loss: $loss - Accuracy: $accuracy - Time: ${time}ms")
 
                 batchOffset += batchSize
             }

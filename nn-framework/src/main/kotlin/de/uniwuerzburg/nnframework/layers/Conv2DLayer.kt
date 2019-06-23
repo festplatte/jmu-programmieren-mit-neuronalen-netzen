@@ -78,7 +78,6 @@ class Conv2DLayer(private val inputShape: Shape,
     * outTensor = inTensor * kernelTensor + bias  (*: convolution operator)
     */
     override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
-
         for (i in inTensors.indices){
             val inTensor = inTensors.get(i)
             val outTensor = outTensors.get(i)
@@ -142,7 +141,7 @@ class Conv2DLayer(private val inputShape: Shape,
         }
 
         // The bias deltas still net to be written
-        bias.setDeltas(biasDeltas)
+        bias.deltas = biasDeltas
     }
 
     /**

@@ -23,6 +23,7 @@ class Network<T>(private val input: InputLayer<T>,
         // TODO could be optimized: pass in the updateMechanism as a function which is passed to every layer which then updates its own weights
         if (updateMechanism == SGDFlavor.STOCHASTIC_GRADIENT_DESCENT) {
             for (layer in layers) {
+                // TODO implement updates for all weight layers
                 if (layer is FullyConnectedLayer) {
                     //Update Bias
                     for (i in layer.bias.deltas.indices) {
