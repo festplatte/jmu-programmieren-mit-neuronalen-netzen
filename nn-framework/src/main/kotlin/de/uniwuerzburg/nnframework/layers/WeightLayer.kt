@@ -8,4 +8,5 @@ import de.uniwuerzburg.nnframework.data.Tensor
  */
 interface WeightLayer: Layer {
     fun calculateDeltaWeights(outTensors: List<Tensor>, inTensors: List<Tensor>)
+    fun updateWeights(updater: (value: Float, delta: Float) -> Float)
 }
