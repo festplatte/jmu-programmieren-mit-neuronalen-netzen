@@ -27,9 +27,9 @@ fun main(args: Array<String>) {
             SoftmaxLayer(Shape(intArrayOf(1, 10)))
     ))
 
-    val trainer = SGDTrainer(256, 0.001f, 10, CrossEntropyLoss(), true, SGDFlavor.STOCHASTIC_GRADIENT_DESCENT)
-    trainer.optimize(cnNetwork, mnistTrain)
-    trainer.validate(cnNetwork, mnistTest)
+    val trainer = SGDTrainer(256, 0.01f, 5, CrossEntropyLoss(), true, SGDFlavor.STOCHASTIC_GRADIENT_DESCENT)
+    trainer.optimize(fcNetwork, mnistTrain)
+    trainer.validate(fcNetwork, mnistTest)
 }
 
 fun readFiles(path: String): Map<String, Tensor> {
