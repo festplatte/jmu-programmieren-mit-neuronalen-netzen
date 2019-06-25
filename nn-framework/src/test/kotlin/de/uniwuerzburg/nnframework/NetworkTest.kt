@@ -36,7 +36,7 @@ class NetworkTest {
     val crossEntropyLoss = CrossEntropyLoss()
 
     @Test
-    fun testMarkusNumbers(){
+    fun testMarkusNumbersFC(){
         fc1.setWeightsForTesting(fc1_bias, fc1_weights)
         fc2.setWeightsForTesting(fc2_bias, fc2_weights)
         fc1.forward(input, fc1_output)
@@ -102,5 +102,50 @@ class NetworkTest {
         Assert.assertEquals(fc2.bias.deltas[1], 0.3268f, EPSILON)
 
         //fc1.backward(fc1_output, input)
+    }
+
+
+    @Test
+    fun testMarkusNumbersConv2D(){
+        // Init layer
+        val conv2D_layer = Conv2DLayer( inputShape = Shape(intArrayOf(4,3,2)),
+                outShape = Shape(intArrayOf(3,2,2)),
+                filterShape = Shape(intArrayOf(2,2,2)),
+                numOfFilters = 2)
+
+        val conv2D_weights = floatArrayOf(  0.1f, -0.2f, 0.3f, 0.4f, 0.7f, 0.6f, 0.9f, -1.1f,
+                                            0.37f, -0.9f, 0.32f, 0.17f, 0.9f, 0.3f, 0.2f, -0.7f)
+        val conv2DLayer_bias = floatArrayOf(0.0f, 0.0f)
+        conv2D_layer.setWeightsForTesting(Tensor(Shape(intArrayOf(2,2,2,2)), conv2D_weights),
+                                          Tensor (Shape(intArrayOf(2)), conv2DLayer_bias ))
+
+        // Init in and out tensor
+        val out_tensors = listOf<Tensor>(Tensor(Shape(intArrayOf(3,2,2))))
+        val in_tensors = listOf<Tensor>(
+                Tensor(Shape(intArrayOf(4,3,2)),
+                        floatArrayOf(0.1f, -0.2f, 0.5f, 0.6f, 1.2f, 1.4f, 1.6f, 2.2f, 0.01f, 0.2f, -0.3f, 4.0f, 0.9f,
+                                0.3f, 0.5f, 0.65f, 1.1f, 0.7f, 2.2f, 4.4f, 3.2f, 1.7f, 6.3f, 8.2f)))
+
+        // Forward Pass
+        conv2D_layer.forward(in_tensors, out_tensors)
+        val out_conv2D = out_tensors.get(0)
+
+        //Set madeup deltas
+        out_conv2D.deltas = floatArrayOf(0.1f, 0.33f, -0.6f, -0.25f, 1.3f, 0.01f, -0.5f, 0.2f, 0.1f, -0.8f, 0.81f, 1.1f)
+
+        // Backward Pass
+        conv2D_layer.backward(out_tensors, in_tensors)
+
+        val modifiedKernelForBackward = conv2D_layer.rotatedTransposedKernel
+        val deltas_backward = in_tensors.get(0).deltas
+        val delta_weights = conv2D_layer.getKernel.deltas
+
+        // Compare results with Markus' numbers
+        //Forward
+        //Assert.assertEquals(out_conv2D.elements[0], 2.0f, EPSILON)
+        // Modified Kernel
+        Assert.assertEquals(modifiedKernelForBackward.get(0,0,0,0), 0.4f, EPSILON)
+
+
     }
 }
