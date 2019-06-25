@@ -8,10 +8,10 @@ Folgende Punkte müssen erfüllt sein zur Abgabe des Projekts.
     [x] FullyConnected
     [x] Softmax
     [x] Conv2D
-[ ] Activation-Funktionen als Layer
-    [ ] ReLU
+[x] Activation-Funktionen als Layer
+    [x] ReLU
     [x] Sigmoid
-    [ ] TanH
+    [x] TanH
 [x] Loss-Funktionen
     [x] Cross-Entropy
     [x] Mean-Squared-Error
