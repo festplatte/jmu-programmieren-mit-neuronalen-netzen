@@ -15,6 +15,7 @@ class FullyConnectedLayer(private val inShape: Shape,
     // Create tensors for the weight matrix W and for the bias
     var bias: Tensor = Tensor(Shape(outShape.axis.clone()), FloatArray(outShape.volume))
 
+
     // W: Fully connected, e.g. one weight between each pair contained in the in and the outShape
     // For each element in the inTensor there is a connection to each element of the outTensor
     // If the inshape has more than one dimensions, the shape needs to be flattened to a vector

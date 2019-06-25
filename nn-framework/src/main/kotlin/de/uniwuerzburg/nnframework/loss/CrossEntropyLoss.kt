@@ -19,7 +19,12 @@ class CrossEntropyLoss : LossFkt {
             var label = labels.get(i)
 
             for (k in result.elements.indices) {
-                combinedLoss -= label.elements[k] * ln(result.elements[k])
+                if(result.elements[k] != 0f){
+                    combinedLoss -= label.elements[k] * ln(result.elements[k])
+                }
+                else{
+                    combinedLoss -= label.elements[k] * ln(Float.MIN_VALUE)
+                }
             }
         }
 
@@ -35,7 +40,12 @@ class CrossEntropyLoss : LossFkt {
             var label = labels.get(i)
 
             for (k in result.elements.indices) {
-                result.deltas[k] = (-1) * (label.elements[k] / result.elements[k])
+                if(result.elements[k] != 0f){
+                    result.deltas[k] = (-1) * (label.elements[k] / result.elements[k])
+                }
+                else{
+                    result.deltas[k] = (-1) * (label.elements[k] / Float.MIN_VALUE)
+                }
             }
         }
     }

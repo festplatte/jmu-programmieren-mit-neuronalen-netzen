@@ -2,6 +2,7 @@ package de.uniwuerzburg.nnframework
 
 import de.uniwuerzburg.nnframework.data.Tensor
 import de.uniwuerzburg.nnframework.layers.*
+import kotlin.math.sqrt
 
 /**
  * Netzwerk führt Forward-, Backward-Pass und Weightupdates auf den Layern aus.
@@ -45,7 +46,45 @@ class Network<T>(private val input: InputLayer<T>,
                 }
             }
         } else if (updateMechanism == SGDFlavor.ADAM) {
-            // TODO implement adam optimizer
+            var m = 0f;
+            var v = 0f;
+            var beta1 = 0.9f
+            var beta2 = 0.999f
+            var epsilon = 0.00000001f
+            for (layer in layers) {
+                if (layer is FullyConnectedLayer) {
+                    //Update Bias
+                    for (i in layer.bias.deltas.indices) {
+                        //m = beta1 * m + (1 - beta1) * layer.bias.deltas[i]
+                        //v = beta2 * v + (1 - beta1) * layer.bias.deltas[i] * layer.bias.deltas[i]
+                        layer.bias.elements[i] -= (learningRate * m) / (sqrt(v) * epsilon)
+                        layer.bias.deltas[i] = 0f
+                    }
+                    //Update weightmatrix
+                    for (i in layer.weightmatrix.deltas.indices) {
+                        //m = beta1 * m + (1 - beta1) * layer.weightmatrix.deltas[i]
+                        //v = beta2 * v + (1 - beta1) * layer.weightmatrix.deltas[i] * layer.weightmatrix.deltas[i]
+                        layer.weightmatrix.elements[i] -= (learningRate * m) / (sqrt(v) * epsilon)
+                        layer.weightmatrix.deltas[i] = 0f
+                    }
+                }
+                if (layer is Conv2DLayer) {
+                    //Update Bias
+                    for (i in layer.bias.deltas.indices) {
+                        //m = beta1 * m + (1 - beta1) * layer.bias.deltas[i]
+                        //v = beta2 * v + (1 - beta1) * layer.bias.deltas[i] * layer.bias.deltas[i]
+                        layer.bias.elements[i] -= (learningRate * m) / (sqrt(v) * epsilon)
+                        layer.bias.deltas[i] = 0f
+                    }
+                    //Update filters
+                    for (i in layer.kernel.deltas.indices) {
+                        //m = beta1 * m + (1 - beta1) * layer.kernel.deltas[i]
+                        //v = beta2 * v + (1 - beta1) * layer.kernel.deltas[i] * layer.kernel.deltas[i]
+                        layer.kernel.elements[i] -= (learningRate * m) / (sqrt(v) * epsilon)
+                        layer.kernel.deltas[i] = 0f
+                    }
+                }
+            }
         }
     }
 
