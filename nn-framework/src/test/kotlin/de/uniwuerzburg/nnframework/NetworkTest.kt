@@ -104,7 +104,9 @@ class NetworkTest {
         //fc1.backward(fc1_output, input)
     }
 
-
+    /**
+     * @author vb
+     */
     @Test
     fun testMarkusNumbersConv2D(){
         // Init layer
@@ -116,8 +118,8 @@ class NetworkTest {
         val conv2D_weights = floatArrayOf(  0.1f, -0.2f, 0.3f, 0.4f, 0.7f, 0.6f, 0.9f, -1.1f,
                                             0.37f, -0.9f, 0.32f, 0.17f, 0.9f, 0.3f, 0.2f, -0.7f)
         val conv2DLayer_bias = floatArrayOf(0.0f, 0.0f)
-        conv2D_layer.setWeightsForTesting(Tensor(Shape(intArrayOf(2,2,2,2)), conv2D_weights),
-                                          Tensor (Shape(intArrayOf(2)), conv2DLayer_bias ))
+        conv2D_layer.setWeightsForTesting(Tensor(Shape(intArrayOf(2)), conv2DLayer_bias ),
+                                          Tensor(Shape(intArrayOf(2,2,2,2)), conv2D_weights))
 
         // Init in and out tensor
         val out_tensors = listOf<Tensor>(Tensor(Shape(intArrayOf(3,2,2))))
@@ -130,22 +132,93 @@ class NetworkTest {
         conv2D_layer.forward(in_tensors, out_tensors)
         val out_conv2D = out_tensors.get(0)
 
-        //Set madeup deltas
+        //Set made-up deltas
         out_conv2D.deltas = floatArrayOf(0.1f, 0.33f, -0.6f, -0.25f, 1.3f, 0.01f, -0.5f, 0.2f, 0.1f, -0.8f, 0.81f, 1.1f)
 
         // Backward Pass
         conv2D_layer.backward(out_tensors, in_tensors)
-
         val modifiedKernelForBackward = conv2D_layer.rotatedTransposedKernel
         val deltas_backward = in_tensors.get(0).deltas
+
+        // Update weights
+        conv2D_layer.calculateDeltaWeights(out_tensors, in_tensors)
         val delta_weights = conv2D_layer.getKernel.deltas
 
         // Compare results with Markus' numbers
         //Forward
-        //Assert.assertEquals(out_conv2D.elements[0], 2.0f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[0], 2.0f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[1], -0.34000015f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[2], -0.8299999f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[3], 2.123f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[4], -3.8300004f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[5], 2.0599995f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[6], 1.469f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[7], -0.7839999f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[8], -1.4639999f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[9], -0.12880003f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[10], -3.6889997f, EPSILON)
+        Assert.assertEquals(out_conv2D.elements[11], -1.9839993f, EPSILON)
+
         // Modified Kernel
-        Assert.assertEquals(modifiedKernelForBackward.get(0,0,0,0), 0.4f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[0], 0.4f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[1], 0.3f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[2], -0.2f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[3], 0.1f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[4], 0.17f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[5], 0.32f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[6], -0.9f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[7], 0.37f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[8], -1.1f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[9], 0.9f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[10], 0.6f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[11], 0.7f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[12], -0.7f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[13], 0.2f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[14], 0.3f, EPSILON)
+        Assert.assertEquals(modifiedKernelForBackward.elements[15], 0.9f, EPSILON)
 
+        //Backward
+        Assert.assertEquals(deltas_backward[0], -0.175f, EPSILON)
+        Assert.assertEquals(deltas_backward[1], 0.537f, EPSILON)
+        Assert.assertEquals(deltas_backward[2], -0.269f, EPSILON)
+        Assert.assertEquals(deltas_backward[3], 0.030000009f, EPSILON)
+        Assert.assertEquals(deltas_backward[4], -0.451f, EPSILON)
+        Assert.assertEquals(deltas_backward[5], 1.3177f, EPSILON)
+        Assert.assertEquals(deltas_backward[6], -0.5629999f, EPSILON)
+        Assert.assertEquals(deltas_backward[7], -1.215f, EPSILON)
+        Assert.assertEquals(deltas_backward[8], -0.33100003f, EPSILON)
+        Assert.assertEquals(deltas_backward[9], 0.41320002f, EPSILON)
+        Assert.assertEquals(deltas_backward[10],1.0127001f, EPSILON)
+        Assert.assertEquals(deltas_backward[11],0.191f, EPSILON)
+        Assert.assertEquals(deltas_backward[12],-0.38f, EPSILON)
+        Assert.assertEquals(deltas_backward[13],0.32099998f, EPSILON)
+        Assert.assertEquals(deltas_backward[14],-0.072000004f, EPSILON)
+        Assert.assertEquals(deltas_backward[15],-0.33f, EPSILON)
+        Assert.assertEquals(deltas_backward[16], -0.905f, EPSILON)
+        Assert.assertEquals(deltas_backward[17], 1.8259999f, EPSILON)
+        Assert.assertEquals(deltas_backward[18], 0.997f, EPSILON)
+        Assert.assertEquals(deltas_backward[19], 0.926f, EPSILON)
+        Assert.assertEquals(deltas_backward[20], -0.385f, EPSILON)
+        Assert.assertEquals(deltas_backward[21], 2.1669998f, EPSILON)
+        Assert.assertEquals(deltas_backward[22], -1.7679999f, EPSILON)
+        Assert.assertEquals(deltas_backward[23], -0.78099996f, EPSILON)
 
+        // Delta weights
+        Assert.assertEquals(delta_weights[0], 1.18f, EPSILON)
+        Assert.assertEquals(delta_weights[1], 1.5369998f, EPSILON)
+        Assert.assertEquals(delta_weights[2], -0.12350003f, EPSILON)
+        Assert.assertEquals(delta_weights[3], -1.052f, EPSILON)
+        Assert.assertEquals(delta_weights[4], 0.54599994f, EPSILON)
+        Assert.assertEquals(delta_weights[5], 2.5339997f, EPSILON)
+        Assert.assertEquals(delta_weights[6], 0.494f, EPSILON)
+        Assert.assertEquals(delta_weights[7], 6.0029993f, EPSILON)
+        Assert.assertEquals(delta_weights[8], 1.894f, EPSILON)
+        Assert.assertEquals(delta_weights[9], 2.856f, EPSILON)
+        Assert.assertEquals(delta_weights[10],-0.33600003f, EPSILON)
+        Assert.assertEquals(delta_weights[11],3.8370001f, EPSILON)
+        Assert.assertEquals(delta_weights[12],1.767f, EPSILON)
+        Assert.assertEquals(delta_weights[13],6.077f, EPSILON)
+        Assert.assertEquals(delta_weights[14],5.557f, EPSILON)
+        Assert.assertEquals(delta_weights[15],13.293001f, EPSILON)
     }
 }
