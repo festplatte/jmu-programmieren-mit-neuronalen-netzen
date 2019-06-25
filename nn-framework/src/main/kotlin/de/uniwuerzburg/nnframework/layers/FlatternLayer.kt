@@ -6,7 +6,7 @@ import de.uniwuerzburg.nnframework.data.Tensor
 /**
  * Kopiert alle Elemente zwischen den Tensoren. Dabei sollten die Tensoren unterschiedliche Shapes haben. (ineffizient)
  */
-class FlatternLayer(override val outputShape: Shape) : ActivationLayer {
+class FlatternLayer(override val outputShape: Shape) : Layer {
     override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
         inTensors.forEachIndexed { index, tensor ->
             outTensors[index].elements = tensor.elements

@@ -8,24 +8,12 @@ import kotlin.math.tanh
 /**
  * Aktivierungsfunktion tanh.
  */
-class TanHActivation(override val outputShape: Shape): ActivationLayer {
-    override fun forward(inTensors: List<Tensor>, outTensors: List<Tensor>) {
-        for (i in inTensors.indices) {
-            var inTensor = inTensors.get(i)
-            var outTensor = outTensors.get(i)
-            for (k in inTensor.elements.indices) {
-                outTensor.elements[k] = tanh(inTensor.elements[k])
-            }
-        }
+class TanHActivation(outputShape: Shape): ActivationLayer(outputShape) {
+    override fun calculate(value: Float): Float {
+        return tanh(value)
     }
 
-    override fun backward(outTensors: List<Tensor>, inTensors: List<Tensor>) {
-        for (i in inTensors.indices) {
-            var inTensor = inTensors.get(i)
-            var outTensor = outTensors.get(i)
-            for (k in inTensor.deltas.indices) {
-                inTensor.deltas[k] = (1 - tanh(inTensor.elements[k]).pow(2)) * outTensor.deltas[k]
-            }
-        }
+    override fun differentiate(value: Float): Float {
+        return 1f - tanh(value).pow(2)
     }
 }

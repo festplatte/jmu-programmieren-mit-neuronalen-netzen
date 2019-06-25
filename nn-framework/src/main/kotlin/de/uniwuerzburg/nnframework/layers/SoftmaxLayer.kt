@@ -10,7 +10,7 @@ import kotlin.math.pow
  * @author se
  */
 
-class SoftmaxLayer(override val outputShape: Shape) : ActivationLayer {
+class SoftmaxLayer(override val outputShape: Shape) : Layer {
 
     /**
      * Wendet die Softmax-Funktion elementweise an
