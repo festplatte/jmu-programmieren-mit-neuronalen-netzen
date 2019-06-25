@@ -1,10 +1,7 @@
 package de.uniwuerzburg.nnframework
 
 import de.uniwuerzburg.nnframework.data.Tensor
-import de.uniwuerzburg.nnframework.layers.FullyConnectedLayer
-import de.uniwuerzburg.nnframework.layers.InputLayer
-import de.uniwuerzburg.nnframework.layers.Layer
-import de.uniwuerzburg.nnframework.layers.WeightLayer
+import de.uniwuerzburg.nnframework.layers.*
 
 /**
  * Netzwerk führt Forward-, Backward-Pass und Weightupdates auf den Layern aus.
@@ -20,10 +17,8 @@ class Network<T>(private val input: InputLayer<T>,
 
 
     fun updateWeights(updateMechanism: SGDFlavor, learningRate: Float) {
-        // TODO could be optimized: pass in the updateMechanism as a function which is passed to every layer which then updates its own weights
         if (updateMechanism == SGDFlavor.STOCHASTIC_GRADIENT_DESCENT) {
             for (layer in layers) {
-                // TODO implement updates for all weight layers
                 if (layer is FullyConnectedLayer) {
                     //Update Bias
                     for (i in layer.bias.deltas.indices) {
@@ -34,6 +29,18 @@ class Network<T>(private val input: InputLayer<T>,
                     for (i in layer.weightmatrix.deltas.indices) {
                         layer.weightmatrix.elements[i] -= learningRate * layer.weightmatrix.deltas[i]
                         layer.weightmatrix.deltas[i] = 0f
+                    }
+                }
+                if (layer is Conv2DLayer) {
+                    //Update Bias
+                    for (i in layer.bias.deltas.indices) {
+                        layer.bias.elements[i] -= learningRate * layer.bias.deltas[i]
+                        layer.bias.deltas[i] = 0f
+                    }
+                    //Update filters
+                    for (i in layer.kernel.deltas.indices) {
+                        layer.kernel.elements[i] -= learningRate * layer.kernel.deltas[i]
+                        layer.kernel.deltas[i] = 0f
                     }
                 }
             }
