@@ -1,6 +1,7 @@
 package de.uniwuerzburg.nnframework.loss
 
 import de.uniwuerzburg.nnframework.data.Tensor
+import kotlin.math.pow
 
 class MeanSquaredLoss: LossFkt {
     /**
@@ -14,7 +15,7 @@ class MeanSquaredLoss: LossFkt {
             var label = labels.get(i)
 
             for(k in result.elements.indices){
-                combinedLoss += (0.5 * Math.pow((result.elements[k] - label.elements[k]).toDouble(), 2.0)).toFloat()
+                combinedLoss += 0.5f * (result.elements[k] - label.elements[k]).pow(2f)
             }
         }
 
