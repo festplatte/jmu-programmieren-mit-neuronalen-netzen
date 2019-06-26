@@ -54,7 +54,7 @@ fun readFiles(path: String): Map<String, Tensor> {
 fun mapLabelToTensor(label: Int, amountLabels: Int): Tensor {
     val elements = FloatArray(amountLabels)
     for (i in 0 until elements.size) {
-        elements[i] = if (label == i + 1) 1f else 0f
+        elements[i] = if (label == i) 1f else 0f
     }
     return Tensor(Shape(intArrayOf(1, amountLabels)), elements)
 
