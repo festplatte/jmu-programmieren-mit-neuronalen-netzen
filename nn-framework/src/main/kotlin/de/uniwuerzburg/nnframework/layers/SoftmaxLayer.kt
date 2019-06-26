@@ -11,6 +11,7 @@ import kotlin.math.pow
  */
 
 class SoftmaxLayer(override val outputShape: Shape) : Layer {
+    val EPSILON = 0.000000000000000000001f
 
     /**
      * Wendet die Softmax-Funktion elementweise an
@@ -26,6 +27,8 @@ class SoftmaxLayer(override val outputShape: Shape) : Layer {
             }
             for (k in outTensor.elements.indices) {
                 outTensor.elements[k] = E.toFloat().pow(inTensor.elements[k] - maxValue) / softmaxsum
+                if (outTensor.elements[k] < EPSILON) outTensor.elements[k] += EPSILON
+                if (outTensor.elements[k] > 1-EPSILON) outTensor.elements[k] -= EPSILON
             }
         }
     }

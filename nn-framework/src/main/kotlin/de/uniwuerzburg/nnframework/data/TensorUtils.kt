@@ -233,16 +233,25 @@ fun multAndTransposeSecond(tensorA: Tensor, tensorB: Tensor, outTensor: Tensor,
     }
 }
 
+class RandomSingleton {
+    companion object {
+        val rand = Random()
+        init {
+            rand.setSeed(42L)
+        }
+    }
+}
+
 /**
  * Initialisiert die Elemente des uebergebenen Tensors mit gleichverteilt, zufaelligen Werten zwischen -1 und 1
  */
 fun initializeWeights(tensor:Tensor){
     tensor.elements.mapInPlace {_ ->
         //ThreadLocalRandom.current().nextFloat()}
-        if(Random().nextDouble()<0.5){
-            Random().nextFloat()
+        if(RandomSingleton.rand.nextDouble()<0.5){
+            RandomSingleton.rand.nextFloat()
         }else{
-            Random().nextFloat() * -1f
+            RandomSingleton.rand.nextFloat() * -1f
         }
     }
 }

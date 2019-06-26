@@ -29,9 +29,9 @@ fun main(args: Array<String>) {
             SoftmaxLayer(Shape(intArrayOf(1, 10)))
     ))
 
-    val trainer = SGDTrainer(256, 0.001f, 20, CrossEntropyLoss(), true, SGDFlavor.STOCHASTIC_GRADIENT_DESCENT)
-    trainer.optimize(fcNetwork, mnistTest)
-    trainer.validate(fcNetwork, mnistTest)
+    val trainer = SGDTrainer(256, 0.001f, 10, CrossEntropyLoss(), true, SGDFlavor.STOCHASTIC_GRADIENT_DESCENT)
+    trainer.optimize(cnNetwork, mnistTrain)
+    trainer.validate(cnNetwork, mnistTest)
 
 }
 
