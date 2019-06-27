@@ -15,13 +15,11 @@ class FullyConnectedLayer(private val inShape: Shape,
     // Create tensors for the weight matrix W and for the bias
     var bias: Tensor = Tensor(Shape(outShape.axis.clone()), FloatArray(outShape.volume))
 
-
     // W: Fully connected, e.g. one weight between each pair contained in the in and the outShape
     // For each element in the inTensor there is a connection to each element of the outTensor
     // If the inshape has more than one dimensions, the shape needs to be flattened to a vector
     var weightmatrix_shape = Shape(intArrayOf(inShape.volume, outShape.volume))
     var weightmatrix: Tensor = Tensor(weightmatrix_shape)
-
 
     init {
         // Initialize the weights
@@ -101,7 +99,7 @@ class FullyConnectedLayer(private val inShape: Shape,
         bias.deltas = biasDeltas
     }
 
-    /**
+    /*
      * This function can be used to explicitly set the weights during testing
      */
     fun setWeightsForTesting(bias:Tensor, weights:Tensor){

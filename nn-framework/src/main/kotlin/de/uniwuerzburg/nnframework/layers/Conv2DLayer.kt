@@ -14,8 +14,6 @@ class Conv2DLayer(private val inputShape: Shape,
                   private val filterShape: Shape,
                   private val numOfFilters: Int) : WeightLayer {
 
-    // TODO add padding, dilation and strides (optionally)
-
     // Create tensors for the filters and for the bias
     // There is one bias term for each filter
     var bias: Tensor = Tensor(Shape(intArrayOf(numOfFilters))) //col_vector

@@ -12,6 +12,8 @@ fun main(args: Array<String>) {
 //    val mnistTrain = readFiles("C:/Users/Simon Englert/Documents/Studium/ML for NLP/MNIST PyTorch/data/test")
 //    val mnistTrain = readFiles("C:/Users/simon/Documents/Master/MNIST PyTorch/data/train2")
 //    val mnistTest = readFiles("C:/Users/simon/Documents/Master/MNIST PyTorch/data/test")
+//    val mnistTrain = readFiles("C:/Users/Vanessa Borst/Documents/Studium/Master/Sommersemester 2019/ProgNN/MNIST-data/train")
+//    val mnistTest = readFiles("C:/Users/Vanessa Borst/Documents/Studium/Master/Sommersemester 2019/ProgNN/MNIST-data/test")
     val mnistTrain = readFiles("/Users/michaelgabler/Repositories/jmu-machine-learning-for-nlp/exercise-3/MNIST PyTorch/data/train")
     val mnistTest = readFiles("/Users/michaelgabler/Repositories/jmu-machine-learning-for-nlp/exercise-3/MNIST PyTorch/data/test")
 
