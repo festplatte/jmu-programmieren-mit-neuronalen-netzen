@@ -53,18 +53,26 @@
 		\item Negative-Log-Likelihood, Cross-Entropy: $NLL = -\frac{1}{|D|}\sum_i \log[f_\theta(x_i)|_{t_i}]$
 		
 	\end{itemize}
+	\textbf{Konfusionsmatrix} welche Klassen werden wie oft mit welcher Klasse verwechselt?
 	
 	\subsection{Training}
 	Daten werden aufgeteilt in Train/Validierung/Test (z.B. 60/20/20)\\
 	\textbf{Epoche} Verarbeitung aller Trainingsdaten\\
 	\textbf{Iteration} Verarbeitung eines Batches\\
 	\textbf{Batch} Mehrere Trainingsbeispiele werden gerechnet bevor Gewichte einmal geupdated werden (z.B. 10 Beispiele pro Batch)\\
+	\textbf{Learning Rate} Faktor $\eta$, wie stark das Netzwerk durch die Deltas verändert werden soll (d.h. wie schnell es lernt bzw. seine Meinung ändert). Wird beim Update der Gewichte verwendet.
 	\textbf{Evaluation auf Validierungsdaten} zur Anpassung der Hyperparameter (Learning-Rate, Netzstruktur, ...)\\
 	\textbf{Evaluation auf Testdaten} einmalig, um Genauigkeit des trainierten Netzes zu ermitteln
 	\textbf{Forward-Pass} Berechnen des Outputs des Netzwerkes für bestimmte Eingabedaten (z.B. ein Batch)\\
 	\textbf{Backward-Pass} Bilden der partiellen Ableitung für jeden Input in jedem Layer und Speichern der Werte als Deltas\\
-	\textbf{Berechnung der Gewicht-Deltas}\\
-	\textbf{Update der Gewichte}
+	\includegraphics[width=\linewidth]{figures/backpropagation.png}\\
+	\textbf{Berechnung der Gewicht-Deltas} Bilden der partiellen Ableitung für jedes Gewicht jedes Layers und Speichern der Werte als Deltas. Zur Berechnung sind die Deltas der Outputs (siehe Backward-Pass) erforderlich. Für Batches werden die Deltas der Gewichte aufsummiert und nach dem Batch geupdated.\\
+	\includegraphics[width=\linewidth]{figures/calculate-delta-weights.png}\\
+	\textbf{Update der Gewichte} Die Gewichte werden nun geupdated, in dem die Deltas der Gewichte mit den ursprünglichen Gewichten verrechnet werden. Dafür gibt es verschiedene Optimierungsverfahren:
+	\begin{itemize}
+		\item Gradient Descent: für Gewicht $w'_{ij} = w_{ij} - \eta \cdot \delta w_{ij}$
+		\item Adam-Optimizer: robuster gegeüber schlecht gewählter Learning-Rate
+	\end{itemize}
 
 	\subsection{Netzarchitektur}
 	\textbf{Perceptron} (= künstliches Neuron) stellt lineare Trennung (binäre Klassifikation) dar. Kann Funktionen AND, OR und NOT lernen, nicht aber XOR.\\
@@ -77,6 +85,11 @@
 	\section{Layer}
 	Mögliche Schichten aus denen ein neuronales Netz bestehen kann.
 	\subsection{Fully Connected}
+	Beschreibung\\
+	\textbf{Funktionsweise} Bild\\
+	\textbf{Forward-Pass}\\
+	\textbf{Backward-Pass}\\
+	\textbf{Calculate Delta Weights}
 	\subsection{Aktivierungsfunktion}
 	Aktivierungsfunktionen mit Ableitungen
 	\subsection{Softmax}
