@@ -51,12 +51,15 @@
 	\begin{itemize}
 		\item Euklidischer Loss, Mean-Squared-Error: $l_2 = \frac{1}{2N} \sum_i (f_\theta(x_i)-t_i)^2$
 		\item Negative-Log-Likelihood, Cross-Entropy: $NLL = -\frac{1}{|D|}\sum_i \log[f_\theta(x_i)|_{t_i}]$
-		
 	\end{itemize}
-	\textbf{Konfusionsmatrix} welche Klassen werden wie oft mit welcher Klasse verwechselt?
+	\textbf{Konfusionsmatrix} welche Klassen werden wie oft mit welcher Klasse verwechselt?\\
+	\textbf{Linearisiertes Speichern mehrdimensionaler Objekte}\\
+	\includegraphics[width=0.25\linewidth]{figures/row-column-major.png}\\
+
 	
 	\subsection{Training}
 	Daten werden aufgeteilt in Train/Validierung/Test (z.B. 60/20/20)\\
+	\textbf{Datenaugmentierung} Generieren zusätzlicher Daten (z.B. bei Bildern) durch Spiegelung, Rotation, Skalierung, Anpassung Helligkeit und Farbe, etc.\\
 	\textbf{Epoche} Verarbeitung aller Trainingsdaten\\
 	\textbf{Iteration} Verarbeitung eines Batches\\
 	\textbf{Batch} Mehrere Trainingsbeispiele werden gerechnet bevor Gewichte einmal geupdated werden (z.B. 10 Beispiele pro Batch)\\
@@ -72,7 +75,19 @@
 	\begin{itemize}
 		\item Gradient Descent: für Gewicht $w'_{ij} = w_{ij} - \eta \cdot \delta w_{ij}$
 		\item Adam-Optimizer: robuster gegeüber schlecht gewählter Learning-Rate
+		\item Adagrad
+		\item RMSProp
 	\end{itemize}
+	\textbf{Regularisierung} Methoden um Overfitting vorzubeugen
+	\begin{itemize}
+		\item Rauschen auf Eingabedaten, Gewichten, Ausgabe (Zufallswerte hinzufügen)
+		\item Datenaugmentierung
+		\item Early-Stopping: Laufende Validierung auf Validierungsset, Trainingsabbruch wenn Accuracy abnimmt
+		\item Dropout (siehe Layer)
+		
+	\end{itemize}
+	\textbf{Pre-Training} Verwende Startgewichte, die bereits auf ähnlichen Daten trainiert wurden $\rightarrow$ besser als zufällige Initialisierung.\\
+	\textbf{Transferlearning} Verwende vortrainiertes Netz und trainiere nur einzelne Schichten (z.B. letzte Schicht für Klassifikation) neu.
 
 	\subsection{Netzarchitektur}
 	\textbf{Perceptron} (= künstliches Neuron) stellt lineare Trennung (binäre Klassifikation) dar. Kann Funktionen AND, OR und NOT lernen, nicht aber XOR.\\
@@ -84,26 +99,88 @@
 
 	\section{Layer}
 	Mögliche Schichten aus denen ein neuronales Netz bestehen kann.
-	\subsection{Fully Connected}
-	Beschreibung\\
+	\subsection{Fully Connected / Dense}
+	Voll verbundene Schicht, d.h. jeder Input landet in jedem Neuron. Wird z.B. als letzter Layer zur Klassifikation verwendet, um Vektor mit Logits für Klassen auszugeben.\\
+	\textbf{Parameter} $X \in \R^{1 \times a}$: Eingabe, $W \in \R^{a \times n}$: Gewichtsmatrix, $b \in \R^{1 \times n}$: Bias, $n$: Anzahl der Neuronen, $Y \in \R^{1 \times n}$: Ausgabe\\
 	\textbf{Funktionsweise} Bild\\
-	\textbf{Forward-Pass}\\
-	\textbf{Backward-Pass}\\
-	\textbf{Calculate Delta Weights}
+	\textbf{Forward-Pass} $$Y = X \cdot W + b$$
+	\textbf{Backward-Pass} $$\delta X = \delta Y \cdot W^T$$
+	\textbf{Calculate Delta Weights} $$\frac{\delta L}{\delta W} = X^T \cdot \delta Y$$ $$\frac{\delta L}{\delta b} = \delta Y$$
 	\subsection{Aktivierungsfunktion}
-	Aktivierungsfunktionen mit Ableitungen
+	Elementweise Anwendung\\
+	\begin{tabular}{|l|l|l|}
+	\hline
+	\textbf{Funktion} & \textbf{Forward} & \textbf{Backward}\\
+	\hline
+	tanh & $Y = \tanh(X)$ & $\delta X = (1 - \tanh^2(X)) \odot \delta Y$\\
+	\hline
+	Sigmoid & $Y = \sigma(X) = \frac{1}{1 + e^{-X}}$ & $\delta X = (\sigma(X) \cdot (1-\sigma(x))) \odot \delta Y$\\
+	\hline
+	ReLU & $Y = ReLU(X)$ & $\delta X = ReLU'(X) \odot Y$\\
+	\hline
+	\end{tabular}\\
+	\\
+	ReLU: $ReLU(x) = x > 0 ? x : 0$, $ReLU'(x) = x > 0 ? 1 : 0$
 	\subsection{Softmax}
+	Normalisiert eine Menge von Werten, sodass deren Summe 1 ergibt. Wird zur Berechnung der Wahrscheinlichkeitsverteilung bei Klassifikation verwendet.\\
+	\textbf{Forward-Pass} $$Y = softmax(X) = \frac{e^{x_i}}{\sum_i e^{x_i}}$$
+	\textbf{Backward-Pass} $$\delta X = \delta Y \cdot
+	\begin{bmatrix}
+	\frac{\delta x_1}{\delta y_1} & \cdots & \frac{\delta x_n}{\delta y_1}\\
+	\cdots & \ddots & \cdots\\
+	\frac{\delta x_1}{\delta y_n} & \cdots & \frac{\delta x_n}{\delta y_n}
+	\end{bmatrix}
+	$$
 	\subsection{Dropout}
-	Für Regularisierung verwendet
+	Für Regularisierung verwendet. Ein Teil der Gewichte wird zufällig je Durchlauf auf 0 gesetzt (deaktiviert). Wird nicht trainiert, sollten alle Gewichte weitergegeben, aber durch die Dropout-Rate geteilt werden, da sonst eine zu hohe Aktivierung der nächsten Schicht statt findet.\\
+	\textbf{Parameter} $d$: Dropout-Rate gibt den prozentualen Anteil der zu deaktivierenden Gewichte an.
 	\subsection{Convolutional}
+	Extrahiert Features aus einer Matrix. Wird oft in der Bildklassifizierung verwendet oder NLP zur Satzklassifikation (Kernel Größe der Embeddings $\times$ Anzahl betrachteter Wörter).\\
+	\textbf{Parameter}\\
+	$X \in \R^{h \times w \times d}$: Eingabe\\
+	$(fh, fw)$: Filtergröße\\
+	$fn$: Anzahl Filter\\
+	$F \in \R^{fh \times fw \times fd \times fn}$: Filtertensor\\
+	$b \in \R^{fn}$: Bias (ein Wert pro Ausgabechannel, wird auf jeden Wert des Channels addiert)\\
+	$Y \in \R^{(h-fh+1) \times (w-fw+1) \times fn}$: Ausgabe\\
+	\textbf{Optionale Parameter} Stride: wie weit der Filter verschoben wird (default = 1), Dilation: zusätzliche 0en im Filter (Filter über nicht benachbarte Elemente)\\
+	\textbf{Padding} Covolution verkleinert die Daten. Um dies zu verhindern, kann die Eingabe gepadded werden (Hinzufügen von 0en am Rand der Eingabe).\\
+	\textit{Half-Padding}: Ausgabegröße = Eingabegröße, $ph = \lfloor \frac{fh}{2} \rfloor$, $pw = \lfloor \frac{fw}{2} \rfloor$\\
+	\textit{Full-Padding (Full-Convolution)}: Ausgabegröße $>$ Eingabegröße, $ph = fh - 1$, $pw = fw - 1$\\
+	\textbf{Forward-Pass} $*$ bezeichnet die Faltungsoperation\\
+	\includegraphics[width=\linewidth]{figures/convolution.png}
+	$$Y = X * F + b$$
+	\textbf{Backward-Pass} $*_F$ bezeichnet die Full-Convolution\\
+	\includegraphics[width=\linewidth]{figures/convolution-backward.png}
+	$$\delta X = \delta Y *_F rot^{180}_{h,w}(trans(F))$$
+	\textbf{Calculate Delta Weights} $*_{ch}$ bezeichnet die Channel-Wise-Convolution, $f$ ist ein Element des Filtertensors
+	$$\frac{\delta L}{\delta f} = X *_{ch} \delta Y$$
+	$$\frac{\delta L}{\delta b_f} = \sum_i \delta y_{i,f}$$
 	\subsection{Pooling}
+	Reduziert die Werte innerhalb eines Filters auf einen Wert (z.B. Maximum oder Durchschnitt). Filter wird ohne Überlappung (mit Stride) verschoben.
+	\textbf{Forward-Pass}\\
+	\includegraphics[width=\linewidth]{figures/max-pooling.png}\\
+	\textbf{Backward-Pass} Nur die Elemente, die im Forward-Pass an der Berechnung des Outputs beteiligt waren, bekommen anteilig oder ganz das Delta des jeweiligen Outputs.
+	$$\delta x_i = (x_i == max) ? \delta y : 0$$
 	\subsection{Vanilla RNN}
 	\subsection{LSTM}
 	\subsection{Gru}
 
+	\section{Loss-Funktionen}
+	$X$: Eingabe der Loss-Funktion bzw. Ausgabe des Netzes (Prediction)\\
+	$T$: Erwartetes Ergebnis (Ground Truth)
+	\subsection{Cross Entropy}
+	Negative-Log-Likelihood, Cross-Entropy\\
+	\textbf{Forward-Pass} $$L = -\sum_i t_i \cdot \log(x_i)$$
+	\textbf{Backward-Pass} $$\frac{\delta L}{\delta x_i} = -\frac{t_i}{x_i}$$
+	\subsection{Mean Squared Error}
+	Euklidischer Loss, Mean-Squared-Error, $l_2$-Loss\\
+	\textbf{Forward-Pass} $$L = \sum_i \frac{1}{2} (x_i - t_i)^2$$
+	\textbf{Backward-Pass} $$\frac{\delta L}{\delta x_i} = t_i - x_i$$
 
 
-	\section{aus alter Vorlesung}
+
+	\section{aus KI2-Vorlesung}
 	\textbf{Perceptron} (= künstliches Neuron) stellt lineare Trennung (binäre Klassifikation) dar. Kann Funktionen AND, OR und NOT lernen, nicht aber XOR.\\
 	\includegraphics[width=\linewidth]{figures/perceptron.png}\\
 	mit Inputs $a_j$ gewichtet mit $W_{ji}$ (ergeben zusammen die Gewichtsmatrix $W$), Outputs $a_i$ und der Aktivierungsfunktion $g$ mit der der Output berechnet wird.\\
