@@ -10,9 +10,10 @@
 \contentsline {subsection}{\numberline {2.5}Convolutional}{6}% 
 \contentsline {subsection}{\numberline {2.6}Pooling}{7}% 
 \contentsline {subsection}{\numberline {2.7}Vanilla RNN}{8}% 
-\contentsline {subsection}{\numberline {2.8}LSTM}{8}% 
-\contentsline {subsection}{\numberline {2.9}Gru}{8}% 
-\contentsline {section}{\numberline {3}Loss-Funktionen}{8}% 
-\contentsline {subsection}{\numberline {3.1}Cross Entropy}{8}% 
-\contentsline {subsection}{\numberline {3.2}Mean Squared Error}{9}% 
-\contentsline {section}{\numberline {4}aus KI2-Vorlesung}{9}% 
+\contentsline {subsection}{\numberline {2.8}Gru}{9}% 
+\contentsline {subsection}{\numberline {2.9}LSTM}{10}% 
+\contentsline {subsection}{\numberline {2.10}Highway Layer}{11}% 
+\contentsline {section}{\numberline {3}Loss-Funktionen}{11}% 
+\contentsline {subsection}{\numberline {3.1}Cross Entropy}{11}% 
+\contentsline {subsection}{\numberline {3.2}Mean Squared Error}{11}% 
+\contentsline {section}{\numberline {4}aus KI2-Vorlesung}{11}% 

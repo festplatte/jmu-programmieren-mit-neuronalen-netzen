@@ -102,7 +102,6 @@
 	\subsection{Fully Connected / Dense}
 	Voll verbundene Schicht, d.h. jeder Input landet in jedem Neuron. Wird z.B. als letzter Layer zur Klassifikation verwendet, um Vektor mit Logits für Klassen auszugeben.\\
 	\textbf{Parameter} $X \in \R^{1 \times a}$: Eingabe, $W \in \R^{a \times n}$: Gewichtsmatrix, $b \in \R^{1 \times n}$: Bias, $n$: Anzahl der Neuronen, $Y \in \R^{1 \times n}$: Ausgabe\\
-	\textbf{Funktionsweise} Bild\\
 	\textbf{Forward-Pass} $$Y = X \cdot W + b$$
 	\textbf{Backward-Pass} $$\delta X = \delta Y \cdot W^T$$
 	\textbf{Calculate Delta Weights} $$\frac{\delta L}{\delta W} = X^T \cdot \delta Y$$ $$\frac{\delta L}{\delta b} = \delta Y$$
@@ -157,14 +156,48 @@
 	$$\frac{\delta L}{\delta f} = X *_{ch} \delta Y$$
 	$$\frac{\delta L}{\delta b_f} = \sum_i \delta y_{i,f}$$
 	\subsection{Pooling}
-	Reduziert die Werte innerhalb eines Filters auf einen Wert (z.B. Maximum oder Durchschnitt). Filter wird ohne Überlappung (mit Stride) verschoben.
+	Reduziert die Werte innerhalb eines Filters auf einen Wert (z.B. Maximum oder Durchschnitt). Filter wird ohne Überlappung (mit Stride) verschoben.\\
 	\textbf{Forward-Pass}\\
 	\includegraphics[width=\linewidth]{figures/max-pooling.png}\\
 	\textbf{Backward-Pass} Nur die Elemente, die im Forward-Pass an der Berechnung des Outputs beteiligt waren, bekommen anteilig oder ganz das Delta des jeweiligen Outputs.
 	$$\delta x_i = (x_i == max) ? \delta y : 0$$
 	\subsection{Vanilla RNN}
-	\subsection{LSTM}
+	Recurrent Neuronal Networks (RNNs) werden verwendet, um Daten unterschiedlicher Länge zu verarbeiten. Dabei wird ein Hidden State $h$ in jedem Schritt um Informationen der Eingabe ergänzt.\\
+	\textbf{Parameter}\\
+	$[x_0, \cdots, x_n] = X \in \R^{n \times m}$: Eingabevektoren mit jeweils Länge $m$\\
+	$g$: Zwischenvariable nach der Addition vor $\tanh$\\
+	$h$: Hidden State ($h_{-1}$ kann mit Nullen initialisiert werden)\\
+	$W_x, W_h, W_o$: Gewichtsmatrizen\\
+	$b$: Bias\\
+	$[o_0, \cdots, o_n] = O \in \R^{n \times l}$: Ausgabevektoren mit jeweils Länge $l$\\
+	\textbf{Funktionsweise}\\
+	\includegraphics[width=\linewidth]{figures/vanilla-rnn.png}\\
+	\textbf{Forward-Pass}
+	$$h_t = \tanh(h_{t-1} \cdot W_h + x_t \cdot W_x + b)$$
+	$$o_t = h_t \cdot W_o$$
+	\textbf{Backward-Pass}
+	$$\delta h_t = \delta o_t \cdot W_o^T + \delta g_{t+1} \cdot W_h^T$$
+	$$\delta g_t = \delta h_t \cdot (1 - \tanh^2(g_t)) = \delta h_t \cdot (1 - h_t^2)$$
+	$$\delta x_t = \delta g_t \cdot W_x^T$$
+	\textbf{Calculate Delta Weights}
+	$$\delta W_h = \sum_t h_{t-1}^T \cdot \delta g_t$$
+	$$\delta W_x = \sum_t x_t^T \cdot \delta g_t$$
+	$$\delta W_o = \sum_t h_t^T \cdot \delta o_t$$
+	$$\delta b = \sum_t \delta g_t$$
 	\subsection{Gru}
+	Verwendet zwei Gates (wie $g$ im Vanilla RNN), um zu bestimmen, was aus dem alten Internal State $h$ übernommen wird und was von den aktuell verarbeiteten Daten hinzugefügt wird.\\
+	\textbf{Funktionsweise}\\
+	\includegraphics[width=\linewidth]{figures/gru.png}
+	\subsection{LSTM}
+	Verwendet drei Gates (Forget, Input, Output) und zusätzlichen State $c$\\
+	\textbf{Funktionsweise}\\
+	\includegraphics[width=\linewidth]{figures/lstm.png}
+	\subsection{Highway Layer}
+	Verwendet ein Gate, das bestimmt, ob der Layer wie ein Fully Connected Layer funktioniert oder lediglich den Input weitergibt. Wird verwendet bei sehr tiefen Netzwerken ($>$ 100 Layer), um Daten über lange Zeit/viele Layer hinweg nutzbar zu machen.\\
+	\textbf{Forward-Pass}
+	$$Y = (X \cdot W + b) \cdot T(x) + x \cdot (1 - T(x))$$
+	$$T(x) = \sigma(x \cdot W_T + b_T)$$
+
 
 	\section{Loss-Funktionen}
 	$X$: Eingabe der Loss-Funktion bzw. Ausgabe des Netzes (Prediction)\\
