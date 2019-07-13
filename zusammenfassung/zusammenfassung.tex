@@ -198,7 +198,6 @@
 	$$Y = (X \cdot W + b) \cdot T(x) + x \cdot (1 - T(x))$$
 	$$T(x) = \sigma(x \cdot W_T + b_T)$$
 
-
 	\section{Loss-Funktionen}
 	$X$: Eingabe der Loss-Funktion bzw. Ausgabe des Netzes (Prediction)\\
 	$T$: Erwartetes Ergebnis (Ground Truth)
@@ -211,45 +210,38 @@
 	\textbf{Forward-Pass} $$L = \sum_i \frac{1}{2} (x_i - t_i)^2$$
 	\textbf{Backward-Pass} $$\frac{\delta L}{\delta x_i} = t_i - x_i$$
 
+	\section{Bildverarbeitung}
+	\includegraphics[width=\linewidth]{figures/bildverarbeitung.png}
+	\subsection{Klassifizierung}
+	In der Regel neuronales Netz mit Convolution und Fully Connected Layern, das das gesamte Bild als Eingabe bekommt.
+	\subsection{Segmentierung}
+	Zuweisung einer Klasse für jeden Pixel eines Bildes.\\
+	\textbf{Sliding Window} Klassifizere kleinere Bildausschnitte. Probleme: Keine Flächen (benachbarte Vorhersagen haben keinen direkten Einfluss), Auflösung wird niedriger durch CNN, kleiner Stride führt zu Mehrfachberechnung\\
+	\textbf{Fully Convolution Network} CNN als Encoder, das Größe verkleinert. Anschließend hochskalieren (Decoder) $\rightarrow$ schnell aber ungenau\\
+	\textbf{Skip Connections} Addieren/Konkatinieren mit Werten aus vorherigen Layern\\
+	\includegraphics[width=\linewidth]{figures/skip-connections.png}\\
+	\textbf{Transposed Convolution} Anwenden der transponierten Convolution zur Bildvergrößerung (wie im Backward-Pass der regulären Convolution)\\
+	\includegraphics[width=\linewidth]{figures/transposed-convolution.png}\\
+	\textbf{Unpooling} Umkehren des Poolings analog zum Backward-Pass (z.B. bei Max-Pooling bekommt das ursprüngliche Maximum alles). Kann nur mit einer Pooling-Schicht verwendet werden, die umgekehrt werden soll $\rightarrow$ Alternative zum Upsampling
+	\subsection{Objekterkennung}
+	\textbf{Single Shot Detector} Definiere Standard Bounding Boxes (BB) im Bild. Netwerk soll Klasse und Abweichung von einer Standard BB angeben.
+	$$L = \frac{1}{N} (L_{conf} + \alpha L_{loc})$$
+	mit $L_{conf}$ als Cross-Entropy über die Klassen und $L_{loc} = - \sum_n^N smooth_{l_1}(l_n - g_n)$\\
+	\textbf{Multi Object Detection} mehrere BBs (ca. 4) pro Pixel. BB gilt als gematched, wenn Flächeninhalt der Vorhersage mit BB zu z.B. 50 Prozent übereinstimmt.\\
+	\textbf{Non-Maximum Suppression} Da oft mehrere BBs matchen, suche BB mit höchster Konfidenz und lösche alle BBs, die z.B. mind. 50 Prozent Overlapping haben. Wiederhole, bis keine BBs mehr gelöscht wurden.
 
-
-	\section{aus KI2-Vorlesung}
-	\textbf{Perceptron} (= künstliches Neuron) stellt lineare Trennung (binäre Klassifikation) dar. Kann Funktionen AND, OR und NOT lernen, nicht aber XOR.\\
-	\includegraphics[width=\linewidth]{figures/perceptron.png}\\
-	mit Inputs $a_j$ gewichtet mit $W_{ji}$ (ergeben zusammen die Gewichtsmatrix $W$), Outputs $a_i$ und der Aktivierungsfunktion $g$ mit der der Output berechnet wird.\\
-	\textbf{Bias} ist der Input eines Perceptrons, der immer konstant bleibt (meist 1) damit das Perceptron auch bei schwachem Input nicht abgeschaltet wird.\\
-	\textbf{Aktivierungsfunktionen} typisch sind:
-	\begin{itemize}
-		\item Stufenfunktion: $g(x) = x < 0 \rightarrow 0, x > 0 \rightarrow 1$ (nicht differenzierbar)
-		\item Sigmoidfunktion: $g(x) = \frac{1}{1 + e^{-x}}$ (siehe Einleitung Lernen)
-		\item ReLU (Rectified Linear Unit): $g(x) = x < 0 \rightarrow 0, x > 0 \rightarrow x$ (nicht differenzierbar für $x=0$)
-		\item Tangenz hyperbolicus: $g(x) = tanh(x)$
-		\item Softmax: Abbildung eines Vektors in Werte zwischen 0 und 1 mit Summe 1 (z.B. für Ausgabelayer)
-	\end{itemize}
-	\textbf{Loss-Funktion} Liefert einen Wert, der repräsentiert, wie gut ein neuronales Netz bereits trainiert ist. Wird anhand des Abgleichs von Vorhersage und tatsächlichem Wert (Ground Truth) berechnet.\\
-	\textbf{Berechnung der Ausgabe}
-	$$Ausgabe_{Schicht(x)} = g(W \cdot Eingabe_{Schicht(x)}) = Eingabe_{Schicht(x+1)}$$
-	\textbf{Rückpropagierung} Fehler (z.B. quadratische Abweichung von erwartetem Wert $\rightarrow$ Loss-Funktion) wird entsprechend der Gewichte auf Vorgängerknoten verteilt\\
-	\textbf{Verteilung des Fehlers}
-	$$Fehler_{Schicht(x-1)} = W^T \cdot Fehler_{Schicht(x)}$$
-	Änderung der Gewichte über Gradient Descent $w_{jk} \leftarrow w_{jk} - \alpha \frac{dE}{dw_{jk}}$ mit $E$ als Loss-Funktion\\
-	\textbf{Datenvorverarbeitung} Inputs zwischen 0 und 1, da hohe Werte niedrige Gradienten erzeugen, Bilder können rotiert, gespiegelt, zugeschnitten, etc. werden um mehr Trainingsdaten zu generieren.\\
-	\textbf{Netzvorbereitung} zufällige Vorbelegung der Gewichte (nicht symmetrisch) $\Rightarrow$ Pre-Training: wenn möglich Gewichte eines bereits trainierten Netzes für ähnliches Problem verwenden\\
-	\textbf{Overfitting} kann durch kleine Netzgröße (nicht so ausdrucksstark), Dropout (ignorieren einiger Knoten für einen Lerndurchgang)\\
-	\textbf{Typen von Schichten}
-	\begin{itemize}
-		\item Fully Connected (FC): besteht aus mehreren Perceptrons (s.o.)
-		\item Convolutional Neural Networks (CNN): Für Bilderkennung, Gewichtungsmatrix über Input verschieben und gewichtete, aufsummierte Werte in Outputmatrix schreiben
-		\item Polling Layer: Verkleinerung von Inputmatrizen durch z.B. Max-Funktion einer Submatrix
-	\end{itemize}
-	\textbf{Multi-Klassen Klassifizierung} über $K$ Diskrimianzfunktionen für $K$ Klassen. Dabei gibt immer eine Funktion für einen bestimmten Bereich/Klasse den höchsten Wert zurück.\\
-	\textbf{Vanishing Problem} Tiefe Netze lernen sehr langsam, da das Änderungsgewicht pro Schicht mit Faktor < 1 multipliziert wird (Ableitung Aktivierungsfunktion). Kann umgangen werden durch ReLU (Ableitung konstant 1 für positive Zahlen)\\
-	\textbf{Recurrent Neural Networks} für die Verarbeitung von sequenziellen Daten (variable Ein-/Ausgabe) z.B. für OCR oder Sprachverarbeitung\\
-	\textbf{Adversial Examples} Manipulierte Inputdaten, die für den Menschen noch gut erkennbar sind (kein merklicher Unterschied zu Original), von einem DNN jedoch falsch klassifiziert werden. Bild wird mit Rauschen addiert, welches auf das Netz trainiert ist. Gegenmaßnahmen:
-	\begin{itemize}
-		\item Trainiere Netz mit Adversial Examples (richtige Klassifikation)
-		\item Mehrere unterschiedliche Technologien zur Klassifikation einsetzen
-		\item DeepCloak entfernen von unnötigen Features, die ausgenutzt werden könnten
-	\end{itemize}
-	
+	\section{Sequence2Sequence}
+	Abbildung von Sequenzen auf Sequenzen, z.B. bei OCR (Eingabe: Pixelspalten, Ausgabe: Buchstabenklassifikation) oder Spracherkennung. Kann z.B. mit LSTMs umgesetzt werden.\\
+	\textbf{Greedy-Decoder} Ermittelt Klasse durch Maximum auf Ausgabe $\rightarrow$ Entfernen doppelter Zeichen $\rightarrow$ Blanks entfernen\\
+	\textbf{Labellings} Beschreibt die Abbilung der Netzausgabe auf sinnvolle Sequenz.
+	$$B: L'^{T} \rightarrow L^{\leq T}$$
+	$$B(a-ab-) = B(-aa--aabb) = aab$$
+	$$B^{-1}(aab) = {a-ab-, ..., aa-ab, ...}$$
+	Summiere die Wahrscheinlichkeiten aller möglichen Pfade, die zum gewünschten Label führen.\\
+	\textbf{CTC-Loss (Connectionist Temporal Classification)}\\
+	Wird angewendet, wenn die Eingabe eine Zeitsequenz der Länge $T$ ist und als Ausgabe eine unalignierte Labelsequenz der Länge $\leq T$ vorliegt\\
+	\includegraphics[width=\linewidth]{figures/ctc-algorithmus.png}
+	$$P(l|x) = \sum_{\pi \in B^{-1}(l)} P(\pi|x)$$
+	mit $l$ als gewünschte Sequenz und $x$ als Netzausgabe\\
+	\textit{Loss}: Maximiere $P(l|x)$ bzw. minimiere $-\log(P(l|x))$\\	
 \end{document}
