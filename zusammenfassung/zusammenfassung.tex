@@ -227,6 +227,7 @@
 	\textbf{Single Shot Detector} Definiere Standard Bounding Boxes (BB) im Bild. Netwerk soll Klasse und Abweichung von einer Standard BB angeben.
 	$$L = \frac{1}{N} (L_{conf} + \alpha L_{loc})$$
 	mit $L_{conf}$ als Cross-Entropy über die Klassen und $L_{loc} = - \sum_n^N smooth_{l_1}(l_n - g_n)$\\
+	\includegraphics[width=\linewidth]{figures/single-shot-detector.png}\\
 	\textbf{Multi Object Detection} mehrere BBs (ca. 4) pro Pixel. BB gilt als gematched, wenn Flächeninhalt der Vorhersage mit BB zu z.B. 50 Prozent übereinstimmt.\\
 	\textbf{Non-Maximum Suppression} Da oft mehrere BBs matchen, suche BB mit höchster Konfidenz und lösche alle BBs, die z.B. mind. 50 Prozent Overlapping haben. Wiederhole, bis keine BBs mehr gelöscht wurden.
 
