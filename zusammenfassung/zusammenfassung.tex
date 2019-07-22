@@ -125,9 +125,9 @@
 	\textbf{Forward-Pass} $$Y = softmax(X) = \frac{e^{x_i}}{\sum_i e^{x_i}}$$
 	\textbf{Backward-Pass} $$\delta X = \delta Y \cdot
 	\begin{bmatrix}
-	\frac{\delta x_1}{\delta y_1} & \cdots & \frac{\delta x_n}{\delta y_1}\\
+	\frac{\delta y_1}{\delta x_1} & \cdots & \frac{\delta y_n}{\delta x_1}\\
 	\cdots & \ddots & \cdots\\
-	\frac{\delta x_1}{\delta y_n} & \cdots & \frac{\delta x_n}{\delta y_n}
+	\frac{\delta y_1}{\delta x_n} & \cdots & \frac{\delta y_n}{\delta x_n}
 	\end{bmatrix}
 	$$
 	\subsection{Dropout}
